@@ -1,0 +1,58 @@
+\documentclass{article}
+
+\usepackage[a4paper, total={7in, 10in}]{geometry}
+
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{braket} 
+\usepackage[spanish]{babel}
+
+\usepackage[numbers]{natbib}
+\bibliographystyle{plainnat}
+
+
+\definecolor{carminered}{rgb}{1.0, 0.0, 0.22}
+\definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+\definecolor{brightlavender}{rgb}{0.75, 0.58, 0.89}
+
+\title{\textbf{Investigación Preliminar}}
+\author{R.B. | I.B. | X.R. | A.M. | A.D. | J.P.R. \\ Dr. Iván Ongay}
+\date{25 de Marzo, 2025}
+\begin{document}
+
+\pagecolor{black} 
+\color{white}
+\maketitle
+
+\selectlanguage{spanish} 
+
+\begin{abstract}
+    Se condujo una breve investigación preliminar para identificar factores significativos cuyos tendrán un impacto notable a lo largo de el desarrollo de el proyecto en cuestión. 
+\end{abstract}
+
+\begin{Large}
+\tableofcontents
+\end{Large}%
+\pagebreak
+
+\section{Introducción} \label{sec:intro}
+\input{Secciónes/intro}
+
+\section{Características de Mercado} \label{sec:caracmerc}
+\input{Secciónes/carac_mercado}
+
+\section{Forecast} \label{sec:forecasting}
+\input{Secciónes/forecast}
+
+\section{Optimización} \label{sec:optimiz}
+\input{Secciónes/optimiz}
+
+\bibliography{biblio} 
+
+\end{document}

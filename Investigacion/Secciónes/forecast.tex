@@ -1,0 +1,15 @@
+Predecir valores futuros usando datos del pasado —lo que llamamos \textit{forecasting de series de tiempo}— es algo clave en muchas áreas como economía o negocios. En el caso de RappiCard, por ejemplo, saber cuántas tarjetas de crédito se necesitarán en el futuro ayuda a tomar mejores decisiones sobre cuántas producir y cuándo hacerlo.
+
+Normalmente, este tipo de predicciones se hace con modelos estadísticos como ARIMA o modelos de machine learning como LSTM. Pero en este proyecto queremos probar algo distinto:
+
+\textbf{Un modelo basado en geometría}, llamado \textit{Geometrical Realization for Time Series Forecasting} \cite{bayeh2024gr}.
+
+Este modelo funciona de otra manera: en lugar de ver la serie de tiempo como una simple lista de números, la convierte en una especie de “figura” o “curva” en un espacio de más dimensiones. Luego, sobre esa figura aplica una transformación que permite hacer la predicción. El objetivo de esta sección es explicar bien cómo funciona ese enfoque y por qué creemos que tiene potencial para este proyecto.
+
+\subsection*{¿Qué es una \texttbf{serie de tiempo}?}
+Una serie de tiempo es una colección de observaciones tomadas en momentos consecutivos, a intervalos regulares. Por ejemplo, el número de tarjetas emitidas por RappiCard cada trimestre es una serie de tiempo univariada. En general, las series pueden ser:
+
+\begin{itemize}
+    \item \textbf{Univariadas:} una sola variable (e.g. ventas mensuales).
+    \item \textbf{Multivariadas:} varias variables relacionadas medidas en paralelo (e.g. ventas + gasto en marketing).
+\end{itemize}
