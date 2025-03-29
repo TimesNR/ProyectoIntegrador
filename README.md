@@ -13,3 +13,5 @@ Para la parte del __bash__ se maneja similar a linux
 * comando -help: Permite ver las opciones de los comandos
 * pwd: Muestra tu ruta de archivos
 * mkdir: Crea una carpeta o un archivo
+* git log: Muestra el hash del commit
+* git add nombre_archivo: Agrega un arc
