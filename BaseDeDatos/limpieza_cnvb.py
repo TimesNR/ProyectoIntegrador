@@ -84,4 +84,4 @@ print(df_credito_filtrado.head())
 # === EXPORTAR BASES DE DATOS ===
 ## Base de datos 1: Datos Historicos (Filtrados)]
 df_credito_filtrado.to_csv("BD_DatosHist_Filtrado.csv", index=False)
-print("Archivo exportado bien vgas.")
+#print("Archivo exportado bien vgas.")
