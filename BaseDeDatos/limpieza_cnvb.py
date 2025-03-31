@@ -39,7 +39,7 @@ subtemas = pd.Series(df_HistData.iloc[1]).ffill()
 # for s in subtemas.unique():
 # 	print("->", s)
 
-## Estructura de DF (Tema->Subtema->Num.Col.)
+# Estructura de DF (Tema->Subtema->Num.Col.)
 columnas = df_HistData.columns
 df_structure = pd.DataFrame({
 	"columna": columnas,
@@ -50,7 +50,7 @@ df_structure = pd.DataFrame({
 # print('\n Estructura completa tema-subtema-columna:')
 # print(df_structure.head())
 
-## Funcion para filtrar datos de DF original usando estructura
+# Funcion para filtrar datos de DF original usando estructura
 def filtra_cols(df_data, df_estructura, palabra_clave):
 	"""
 	Devuelve columnas de df_data cuyo "tema" contenga la palabra_clave.
@@ -67,7 +67,7 @@ def filtra_cols(df_data, df_estructura, palabra_clave):
 
 	return df_data[columnas_resultado]
 
-## Creamos nuevo DF (cols. de df_HistData con tema que incuya 'crédito')
+# Creamos nuevo DF (cols. de df_HistData con tema que incuya 'crédito')
 df_credito = filtra_cols(df_HistData, df_structure, "crédito")
 
 # print(df_credito.head())
@@ -79,7 +79,7 @@ columnas_chilas = list(df_HistData.columns[23:31]) + \
 columnas_index = list(df_HistData.columns[:3])
 df_credito_filtrado = df_HistData[columnas_index + columnas_chilas]
 
-# print(df_credito_filtrado.head())
+print(df_credito_filtrado.head())
 
 # === EXPORTAR BASES DE DATOS ===
 ## Base de datos 1: Datos Historicos (Filtrados)]
