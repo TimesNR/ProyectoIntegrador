@@ -8,12 +8,16 @@ import seaborn as sns
 
 # === CONFIGURACIÓN ===
 
+# Output path (Embedding)
+output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/embedding.csv"))
+
 # Estilo de seaborn
 sns.set(style="whitegrid")
 
-# Estilo pyplot
+# Estilo matplotlib para gui
 matplotlib.use('TkAgg')
 
+# Estilo pyplot
 plt.rcParams["figure.figsize"] = (10, 6)
 plt.rcParams["axes.facecolor"] = "#1e1e1e"
 plt.rcParams["axes.edgecolor"] = "white"
@@ -46,7 +50,7 @@ def embedding(serie, d, tau):
 	emb = []
 
 	for i in range((d - 1) * tau, n):
-		punto = [serie[i - j * tau] for j in range(d)]
+		punto = [serie[i - (j * tau)] for j in range(d)]
 		emb.append(punto[::-1])
 
 	return np.array(emb)
@@ -55,41 +59,50 @@ def embedding(serie, d, tau):
 
 X = embedding(serie, dimension, delay)
 X = np.array(X, dtype=float)
-df_embedding = pd.DataFrame(X, columns=[f"x_{i}" for i in range(dimension)])
 
+df_embedding = pd.DataFrame(X, columns=[f"x_{i}" for i in range(dimension)]) # Visualizar array mas chidamente
+df_embedding.to_csv(output_path, index=False)
 
 # === VISUALIZACION ===
 
-# SERIE ORIGINAL 
-plt.plot(serie, marker='o', color='peru', label="Serie original")
-plt.title("Serie de Tiempo: Tarjetas de Crédito Emitidas")
-plt.xlabel("Trimestre")
-plt.ylabel("Cantidad")
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+def plot_serie(serie):
+    """Visualiza la serie original de tiempo."""
+    plt.plot(serie, marker='o', color='peru', label="Serie original")
+    plt.title("Serie de Tiempo: Tarjetas de Crédito Emitidas")
+    plt.xlabel("Trimestre")
+    plt.ylabel("Cantidad")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
-# EMBEDDING
-if dimension == 3 and X.shape[1] < 3 :
-	raise ValueError("Embedding no tiene suficientes dimensiones para graficar en 3D.")
 
-if dimension == 2:
-	plt.plot(X[:, 0], X[:, 1], marker='o', color='magenta')
-	plt.title("Embedding 2D de la Serie")
-	plt.xlabel("x₀")
-	plt.ylabel("x₁")
-	plt.grid(True)
-	plt.tight_layout()
-	plt.show()
+def plot_embedding(X, dimension):
+    """Visualiza el embedding en 2D o 3D."""
+    if dimension == 3 and X.shape[1] < 3:
+        raise ValueError("Embedding no tiene suficientes dimensiones para graficar en 3D.")
 
-elif dimension == 3:
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-	ax.plot(X[:, 0], X[:, 1], X[:, 2], marker='o', color='lime')
-	ax.set_title("Embedding 3D de la Serie")
-	ax.set_xlabel("x₀")
-	ax.set_ylabel("x₁")
-	ax.set_zlabel("x₂")
-	plt.tight_layout()
-	plt.show()
+    if dimension == 2:
+        plt.plot(X[:, 0], X[:, 1], marker='o', color='magenta')
+        plt.title("Embedding 2D de la Serie")
+        plt.xlabel("x₀")
+        plt.ylabel("x₁")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+    elif dimension == 3:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot(X[:, 0], X[:, 1], X[:, 2], marker='o', color='lime')
+        ax.set_title("Embedding 3D de la Serie")
+        ax.set_xlabel("x₀")
+        ax.set_ylabel("x₁")
+        ax.set_zlabel("x₂")
+        plt.tight_layout()
+        plt.show()
+
+# === CALLS ===
+
+#plot_serie(serie)
+#plot_embedding(X, 2)

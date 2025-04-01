@@ -4,6 +4,9 @@ from tabulate import tabulate
 
 # === CONFIGURACIÓN ===
 
+# Output de base de datos historicos
+output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/BD_DatosHist_Filtrado.csv"))
+
 ## Configurar formato de output en consola
 # Mostrar más columnas y más ancho para que no te las trunque
 pd.set_option('display.max_columns', None)
@@ -79,9 +82,9 @@ columnas_chilas = list(df_HistData.columns[23:31]) + \
 columnas_index = list(df_HistData.columns[:3])
 df_credito_filtrado = df_HistData[columnas_index + columnas_chilas]
 
-print(df_credito_filtrado.head())
+#print(df_credito_filtrado.head())
 
 # === EXPORTAR BASES DE DATOS ===
 ## Base de datos 1: Datos Historicos (Filtrados)]
-df_credito_filtrado.to_csv("BD_DatosHist_Filtrado.csv", index=False)
+df_credito_filtrado.to_csv(output_path, index=False)
 #print("Archivo exportado bien vgas.")
