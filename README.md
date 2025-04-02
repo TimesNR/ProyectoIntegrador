@@ -18,7 +18,7 @@ Para la parte del __bash__ se maneja similar a linux
 
 
 ## Python Style Rules
-
+[Lineamientos generales](https://google.github.io/styleguide/pyguide.html#s3-python-style-rules)
 ### General Rules
 - No terminar con `;`. No poner dos statements en una misma línea.
 - Evitar líneas de más de 80 caracteres.
