@@ -17,7 +17,7 @@ Para la parte del __bash__ se maneja similar a linux
 * git add nombre_archivo: Agrega un arc
 
 
-## 3 Python Style Rules
+## Python Style Rules
 
 ### General Rules
 - No terminar con `;`. No poner dos statements en una misma línea.
@@ -31,7 +31,7 @@ Para la parte del __bash__ se maneja similar a linux
 
 ---
 
-### 3.4 Indentation
+###  Indentation
 - Indentar con **4 espacios** y NO con tabulador.
 - En el caso de diccionario, dejar la llave junto con su valor asociado en una misma línea.
 - Para **trailing commas**, se puede separar por elemento, pero el bracket final debe estar en otra línea:
@@ -46,13 +46,13 @@ Para la parte del __bash__ se maneja similar a linux
 
 ---
 
-### 3.5 Blank Lines
+###  Blank Lines
 - **Dos líneas** entre funciones y clases.
 - **Una línea** entre cada definición de métodos.
 
 ---
 
-### 3.6 White Spaces
+###  White Spaces
 - Sin espacios en blanco entre **paréntesis, comas, dos puntos, etc.**
 - **1 espacio en blanco entre operadores lógicos**:
   ```python
@@ -63,7 +63,7 @@ Para la parte del __bash__ se maneja similar a linux
 
 ---
 
-### 3.8 Comments and Docstrings
+###  Comments and Docstrings
 - Poner un string describiendo el programa, la clase, etc.
   ```python
   """A one-line summary of the module or program, terminated by a period.
@@ -95,7 +95,7 @@ Para la parte del __bash__ se maneja similar a linux
 
 ---
 
-### 3.16 Naming Conventions
+### Naming Conventions
 - **Los nombres deben ser descriptivos**, excepto en valores iterativos de `for` (ejemplo: `i`, `e`).
 - **No usar abreviaciones.**
 - Separar por **guion bajo (`snake_case`)**.
@@ -103,7 +103,7 @@ Para la parte del __bash__ se maneja similar a linux
 
 ---
 
-### 3.17 MAIN Execution
+### MAIN Execution
 Si el archivo está destinado a ser ejecutable, usar la siguiente estructura:
 ```python
 from absl import app
