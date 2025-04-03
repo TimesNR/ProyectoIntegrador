@@ -94,7 +94,8 @@ def plot_embedding(X, dimension):
     elif dimension == 3:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot(X[:, 0], X[:, 1], X[:, 2], marker='o', color='lime')
+        ax.plot(X[:, 0], X[:, 1], X[:, 2], 'o', color='peru')
+        ax.plot(X[:, 0], X[:, 1], X[:, 2], color='black', linewidth=0.8)
         ax.set_title("Embedding 3D de la Serie")
         ax.set_xlabel("x₀")
         ax.set_ylabel("x₁")
@@ -104,5 +105,5 @@ def plot_embedding(X, dimension):
 
 # === CALLS ===
 
-#plot_serie(serie)
-#plot_embedding(X, 2)
+plot_serie(serie)
+plot_embedding(X, 3)
