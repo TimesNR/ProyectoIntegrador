@@ -127,9 +127,15 @@ def predict_recursive_multi_step(model_dict, init_data, steps=1):
 # ==================================
 #   ENTRENAR Y EVALUAR EL MODELO
 # ==================================
-def train_and_evaluate(X, train_ratio=0.8, degree=3, scale=True,
-                       reg_type='ridge', alpha=1.0, plot=True,
-                       forecast_mode='recursive'):
+def train_and_evaluate(
+    X, 
+    train_ratio=0.8, 
+    degree=3, 
+    scale=True,
+    reg_type='ridge', 
+    alpha=1.0, 
+    plot=True,
+    forecast_mode='recursive'):
     """
     Divide X en train/test. Ajusta el modelo polinomial con la parte train.
     Luego predice en la parte test según el modo:
@@ -156,19 +162,17 @@ def train_and_evaluate(X, train_ratio=0.8, degree=3, scale=True,
         degree=degree, scale=scale, reg_type=reg_type, alpha=alpha
     )
 
+    # Real test
     real_test = X_test[:, 2]
-    preds_array = None
-    embedding_with_preds = None
 
+    # Predicciones
     if forecast_mode == 'recursive':
-        # Modo rolling multi-step
         embedding_with_preds, preds_array = predict_recursive_multi_step(
             model_dict,
             init_data=X_train,
             steps=len(X_test)
         )
     elif forecast_mode == 'single_step':
-        # Modo single-step (no arrastra error previo)
         preds_list = []
         embedding_with_preds = X_train.copy()
 
@@ -177,8 +181,8 @@ def train_and_evaluate(X, train_ratio=0.8, degree=3, scale=True,
             X_2d_to_predict = test_row[:2].reshape(1, -1)
 
             scaler = model_dict['scaler']
-            poly = model_dict['poly']
-            reg = model_dict['reg']
+            poly   = model_dict['poly']
+            reg    = model_dict['reg']
 
             if scaler is not None:
                 X_2d_to_predict = scaler.transform(X_2d_to_predict)
@@ -193,7 +197,7 @@ def train_and_evaluate(X, train_ratio=0.8, degree=3, scale=True,
     else:
         raise ValueError("forecast_mode debe ser 'recursive' o 'single_step'")
 
-    # Calcular métricas
+    # Métricas
     mse_val = mean_squared_error(real_test, preds_array)
     mae_val = mean_absolute_error(real_test, preds_array)
     smape_val = smape(real_test, preds_array)
@@ -204,13 +208,96 @@ def train_and_evaluate(X, train_ratio=0.8, degree=3, scale=True,
         "test_smape": smape_val
     }
 
+    # Print
     print(f"[INFO] Modo de predicción: {forecast_mode}")
-    print(f"[INFO] MSE: {mse_val:.4f}, MAE: {mae_val:.4f}, sMAPE: {smape_val:.2f}%")
+    print(f"[INFO] Grado={degree}, alpha={alpha}, MSE={mse_val:.4f}, MAE={mae_val:.4f}, sMAPE={smape_val:.2f}%")
 
+    # Graficar
     if plot:
         _plot_train_test_results(X_train, X_test, embedding_with_preds, preds_array, model_dict, forecast_mode)
 
     return metrics
+
+# ===============================
+#   BÚSQUEDA DE GRADO y ALPHA
+# ===============================
+def search_best_degree_alpha(
+    X,
+    train_ratio=0.8,
+    degrees=[1,2,3],
+    alphas=[0.01, 0.1, 1.0],
+    scale=True,
+    reg_type='ridge',
+    forecast_mode='recursive',
+    plot=False
+):
+    """
+    Prueba distintas combinaciones (grado, alpha) entrenando y evaluando 
+    con train_and_evaluate en el mismo train/test. 
+    Se queda con la que tenga menor sMAPE en test.
+
+    Retorna:
+      - best_config: (mejor_grado, mejor_alpha)
+      - best_metrics: dict con métricas (MSE, MAE, sMAPE)
+      - all_results: lista con ((deg, alpha), metrics)
+    """
+    n = len(X)
+    train_size = int(train_ratio * n)
+    if train_size < 1 or train_size >= n:
+        raise ValueError("train_ratio inválido para el tamaño de X.")
+
+    best_smape = float('inf')
+    best_config = None
+    best_metrics = None
+    all_results = []
+
+    # Desactivamos el plot en la búsqueda, para no graficar mil veces
+    # Pero daremos la opción final de graficar la config ganadora
+    for deg in degrees:
+        for alpha_val in alphas:
+            # Llamamos a train_and_evaluate con plot=False
+            mets = train_and_evaluate(
+                X,
+                train_ratio=train_ratio,
+                degree=deg,
+                scale=scale,
+                reg_type=reg_type,
+                alpha=alpha_val,
+                plot=False,
+                forecast_mode=forecast_mode
+            )
+            all_results.append(((deg, alpha_val), mets))
+            smp = mets['test_smape']
+            if smp < best_smape:
+                best_smape = smp
+                best_config = (deg, alpha_val)
+                best_metrics = mets
+
+    print("\n=== Resultados de la búsqueda (ordenados por sMAPE) ===")
+    sorted_list = sorted(all_results, key=lambda x: x[1]['test_smape'])
+    for combo, mets in sorted_list:
+        d, a = combo
+        print(f"Grado={d}, alpha={a}, MSE={mets['test_mse']:.2f}, "
+              f"MAE={mets['test_mae']:.2f}, sMAPE={mets['test_smape']:.2f}%")
+
+    print(f"\n>> Mejor configuración: Grado={best_config[0]}, alpha={best_config[1]}, sMAPE={best_smape:.2f}%")
+
+    # (Opcional) generar un plot final con la config ganadora
+    if plot:
+        print("\n--- Graficando la mejor config ---")
+        train_and_evaluate(
+            X,
+            train_ratio=train_ratio,
+            degree=best_config[0],
+            scale=scale,
+            reg_type=reg_type,
+            alpha=best_config[1],
+            plot=True,
+            forecast_mode=forecast_mode
+        )
+
+    return best_config, best_metrics, all_results
+
 
 def _plot_train_test_results(X_train, X_test, embedding_with_preds, preds_array, model_dict, forecast_mode):
     # Grafica 3D con train, test y predicciones
@@ -284,32 +371,15 @@ if __name__ == "__main__":
 
     X = cargar_embedding(path_csv)
 
-    train_ratio = 0.85
-    degree = 3
-    scale = True
-    reg_type = 'ridge'
-    alpha = 1.0
-
-    print("\n--- Single-step approach ---")
-    results_single = train_and_evaluate(
+    # Ejemplo de uso: buscar la mejor combinación (grado, alpha)
+    # Y luego graficar la mejor.
+    best_config, best_metrics, all_results = search_best_degree_alpha(
         X,
-        train_ratio=train_ratio,
-        degree=degree,
-        scale=scale,
-        reg_type=reg_type,
-        alpha=alpha,
-        plot=True,
-        forecast_mode='single_step'
-    )
-
-    print("\n--- Recursive approach ---")
-    results_recursive = train_and_evaluate(
-        X,
-        train_ratio=train_ratio,
-        degree=degree,
-        scale=scale,
-        reg_type=reg_type,
-        alpha=alpha,
-        plot=True,
-        forecast_mode='recursive'
+        train_ratio=0.7,
+        degrees=[1,2,3,4],
+        alphas=[0.01, 0.1, 1.0, 5.0],
+        scale=True,
+        reg_type='ridge',
+        forecast_mode='recursive',
+        plot=True   # esto grafica solo la config ganadora al final
     )

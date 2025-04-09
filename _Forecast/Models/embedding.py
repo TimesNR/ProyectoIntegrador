@@ -73,7 +73,7 @@ def plot_serie(serie):
     plt.figure(figsize=(10, 5))  # Opcional: ajustar tamaño
     plt.plot(serie, marker='o', color='peru', label="Serie original")
     plt.title(f"Serie de Tiempo: {col_objetivo}")
-    plt.xlabel("Trimestre")
+    plt.xlabel("Mes")
     plt.ylabel("Cantidad")
     plt.xticks(ticks=np.arange(len(serie)), rotation=45)  # Mostrar todos los índices
     plt.legend()
