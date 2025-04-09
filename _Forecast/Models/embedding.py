@@ -28,17 +28,20 @@ plt.rcParams["text.color"] = "white"
 plt.rcParams["figure.facecolor"] = "#1e1e1e"
 plt.rcParams["savefig.facecolor"] = "#1e1e1e"
 
-# Ruta a base de datos (Datos Historicos CNBV)
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/BD_DatosHist_Filtrado.csv"))
+# Ruta 1: (Datos Historicos CNBV)
+path1 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/BD_DatosHist_Filtrado.csv"))
+
+# Ruta 2: (Rappicard DB)
+path2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/rappiCard_data.csv"))
 
 # Parametros de embedding
 delay = 1 # tau (τ)
 dimension = 3 # d
-col_objetivo = "24" # <- Cambiar este vato pa otra serie si se ocupa i.g. creditos emitidos
+col_objetivo = "# de Usuarios" # <- Cambiar este vato pa otra serie si se ocupa i.g. creditos emitidos
 
 # === CARGA DE DATOS ===
 
-df = pd.read_csv(path)
+df = pd.read_csv(path2, encoding="latin1")
 serie = df[col_objetivo].dropna().reset_index(drop=True) # Asegurarse que la columna esta limpia (lista pa danzar)
 serie = serie.drop(labels=[0, 1], axis=0,).reset_index(drop=True)
 serie = serie.dropna().astype(float)
@@ -66,11 +69,13 @@ df_embedding.to_csv(output_path, index=False)
 # === VISUALIZACION ===
 
 def plot_serie(serie):
-    """Visualiza la serie original de tiempo."""
+    """Visualiza la serie original de tiempo con más índices en el eje x."""
+    plt.figure(figsize=(10, 5))  # Opcional: ajustar tamaño
     plt.plot(serie, marker='o', color='peru', label="Serie original")
     plt.title("Serie de Tiempo: Tarjetas de Crédito Emitidas")
     plt.xlabel("Trimestre")
     plt.ylabel("Cantidad")
+    plt.xticks(ticks=np.arange(len(serie)), rotation=45)  # Mostrar todos los índices
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -95,7 +100,7 @@ def plot_embedding(X, dimension):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         ax.plot(X[:, 0], X[:, 1], X[:, 2], 'o', color='peru')
-        ax.plot(X[:, 0], X[:, 1], X[:, 2], color='black', linewidth=0.8)
+        ax.plot(X[:, 0], X[:, 1], X[:, 2], color='red', linewidth=0.8)
         ax.set_title("Embedding 3D de la Serie")
         ax.set_xlabel("x₀")
         ax.set_ylabel("x₁")
