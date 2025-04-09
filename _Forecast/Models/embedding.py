@@ -37,7 +37,7 @@ path2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDat
 # Parametros de embedding
 delay = 1 # tau (τ)
 dimension = 3 # d
-col_objetivo = "# de Usuarios" # <- Cambiar este vato pa otra serie si se ocupa i.g. creditos emitidos
+col_objetivo = "Demanda Total Tarjetas" # <- Cambiar este vato pa otra serie si se ocupa i.g. creditos emitidos
 
 # === CARGA DE DATOS ===
 
@@ -72,7 +72,7 @@ def plot_serie(serie):
     """Visualiza la serie original de tiempo con más índices en el eje x."""
     plt.figure(figsize=(10, 5))  # Opcional: ajustar tamaño
     plt.plot(serie, marker='o', color='peru', label="Serie original")
-    plt.title("Serie de Tiempo: Tarjetas de Crédito Emitidas")
+    plt.title(f"Serie de Tiempo: {col_objetivo}")
     plt.xlabel("Trimestre")
     plt.ylabel("Cantidad")
     plt.xticks(ticks=np.arange(len(serie)), rotation=45)  # Mostrar todos los índices
