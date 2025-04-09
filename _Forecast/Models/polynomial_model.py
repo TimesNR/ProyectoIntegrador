@@ -377,9 +377,9 @@ if __name__ == "__main__":
         X,
         train_ratio=0.7,
         degrees=[1,2,3,4],
-        alphas=[0.01, 0.1, 1.0, 5.0],
+        alphas=[0.18, 0.712, 0.1, 0.12, 0.15],
         scale=True,
         reg_type='ridge',
-        forecast_mode='recursive',
+        forecast_mode='single_step', # elejir modo de prediccion: 'single_step' ó 'recursive'
         plot=True   # esto grafica solo la config ganadora al final
     )
