@@ -181,7 +181,9 @@ def train_and_evaluate(
     reg_type='ridge',
     alpha=1.0,
     plot=True,
-    forecast_mode='recursive'
+    forecast_mode='recursive',
+    invertir_transf=False,  # Nuevo parámetro para invertir la transformación
+    offset=1e-9             # Offset usado en la transformación log
 ):
     """
     Separa X_full en [train, test], entrena polinomio, 
@@ -193,13 +195,13 @@ def train_and_evaluate(
     """
     n = len(X_full)
     train_size = int(train_ratio*n)
-    if train_size<1:
+    if train_size < 1:
         raise ValueError("train_ratio muy bajo.")
-    if train_size>=n:
+    if train_size >= n:
         raise ValueError("train_ratio muy alto, sin test.")
 
     X_train_full = X_full[:train_size]  # (train_size, k)
-    X_test_full  = X_full[train_size:]  # (test_size,  k)
+    X_test_full  = X_full[train_size:]   # (test_size,  k)
 
     # =========== Extraer features/target de train para entrenar ==============
     if X_full.shape[1] == 3:
@@ -221,7 +223,7 @@ def train_and_evaluate(
     )
 
     # =========== PREDICCION en test =============
-    if forecast_mode=='recursive':
+    if forecast_mode == 'recursive':
         embedding_with_preds, preds_array = predict_recursive_multi_step(
             model_dict, X_train_full, steps=len(X_test_full)
         )
@@ -230,9 +232,8 @@ def train_and_evaluate(
             real_test = X_test_full[:, 2]
         else:
             real_test = X_test_full[:, -1]
-
-    elif forecast_mode=='single_step':
-        preds_list=[]
+    elif forecast_mode == 'single_step':
+        preds_list = []
         for i in range(len(X_test_full)):
             pred_val = predict_one_step_ahead(model_dict, X_test_full, i)
             preds_list.append(pred_val)
@@ -246,14 +247,20 @@ def train_and_evaluate(
     else:
         raise ValueError("forecast_mode debe ser 'recursive' o 'single_step'")
 
+    # Si los datos fueron transformados (por ejemplo, se aplicó log en embedding.csv),
+    # se aplica la transformación inversa (exponencial) antes de calcular las métricas.
+    if invertir_transf:
+        preds_array = np.exp(preds_array) - offset
+        real_test   = np.exp(real_test) - offset
+
     # =========== Calcular MSE/MAE/sMAPE ============
-    mse_val  = mean_squared_error(real_test, preds_array)
-    mae_val  = mean_absolute_error(real_test, preds_array)
-    smape_val= smape(real_test, preds_array)
+    mse_val   = mean_squared_error(real_test, preds_array)
+    mae_val   = mean_absolute_error(real_test, preds_array)
+    smape_val = smape(real_test, preds_array)
     metrics = {
-        "test_mse" : mse_val,
-        "test_mae" : mae_val,
-        "test_smape":smape_val
+        "test_mse": mse_val,
+        "test_mae": mae_val,
+        "test_smape": smape_val
     }
     print(f"[INFO] Mode={forecast_mode}, k={X_full.shape[1]}, deg={degree}, alpha={alpha}")
     print(f"[INFO] MSE={mse_val:.4f}, MAE={mae_val:.4f}, sMAPE={smape_val:.2f}%")
@@ -266,6 +273,7 @@ def train_and_evaluate(
             model_dict, forecast_mode
         )
     return metrics
+
 
 def _plot_train_test_3D(
     X_train_full, X_test_full,
@@ -315,7 +323,8 @@ def search_best_degree_alpha(
     scale=True,
     reg_type='ridge',
     forecast_mode='recursive',
-    plot=False
+    plot=False,
+    invertir=False
 ):
     """
     Itera sobre (degree, alpha), llama a train_and_evaluate.
@@ -341,7 +350,8 @@ def search_best_degree_alpha(
                 reg_type=reg_type,
                 alpha=a,
                 plot=False,
-                forecast_mode=forecast_mode
+                forecast_mode=forecast_mode,
+                invertir_transf=invertir
             )
             smp = mets['test_smape']
             all_results.append(((d,a), mets))
@@ -369,7 +379,8 @@ def search_best_degree_alpha(
             reg_type=reg_type,
             alpha=best_config[1],
             plot=True,
-            forecast_mode=forecast_mode
+            forecast_mode=forecast_mode,
+            invertir_transf=invertir
         )
 
     return best_config, best_metrics, all_results
@@ -390,10 +401,11 @@ if __name__=="__main__":
     best_cfg, best_mets, all_res = search_best_degree_alpha(
         X_full,
         train_ratio=0.7,
-        degrees=[1,2,3],
-        alphas=[0.1, 0.5, 1.0, 0.711, 0.2, 5.0, 1e9, 20.0],
+        degrees=np.arange(0,4,1),
+        alphas=np.arange(0,30,0.5),
         scale=True,
-        reg_type='ridge',
+        reg_type='lasso',
         forecast_mode='recursive',
-        plot=True
+        plot=True,
+        invertir=False
     )

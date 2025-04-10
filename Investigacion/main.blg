@@ -1,0 +1,57 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: plainnat.bst
+Database file #1: biblio.bib
+Warning--empty journal in expansion_millon_2024
+Warning--empty journal in dock2024
+Warning--empty journal in elfinanciero2024
+Warning--empty journal in finnovating2024
+Warning--empty journal in inegi2021
+Warning--empty journal in forbes_cartera_2024
+Warning--empty journal in santander2024
+Warning--empty journal in chocale_millon_2024
+Warning--empty journal in uflow2024
+Warning--empty journal in reporteindigo2024
+You've used 14 entries,
+            2773 wiz_defined-function locations,
+            655 strings with 7637 characters,
+and the built_in function-call counts, 4562 in all, are:
+= -- 413
+> -- 160
+< -- 13
++ -- 63
+- -- 48
+* -- 265
+:= -- 749
+add.period$ -- 58
+call.type$ -- 14
+change.case$ -- 58
+chr.to.int$ -- 13
+cite$ -- 38
+duplicate$ -- 267
+empty$ -- 432
+format.name$ -- 62
+if$ -- 942
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 13
+newline$ -- 93
+num.names$ -- 56
+pop$ -- 139
+preamble$ -- 1
+purify$ -- 44
+quote$ -- 0
+skip$ -- 180
+stack$ -- 0
+substring$ -- 28
+swap$ -- 6
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 154
+warning$ -- 10
+while$ -- 42
+width$ -- 0
+write$ -- 198
+(There were 10 warnings)

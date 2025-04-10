@@ -4,7 +4,7 @@ Normalmente, este tipo de predicciones se hace con modelos estadísticos como AR
 
 \textbf{Un modelo basado en geometría}, llamado \textit{Geometrical Realization for Time Series Forecasting} \cite{bayeh2024gr}.
 
-Este modelo funciona de otra manera: en lugar de ver la serie de tiempo como una simple lista de números, la convierte en una especie de “figura” o “curva” en un espacio de más dimensiones. Luego, sobre esa figura aplica una transformación que permite hacer la predicción. El objetivo de esta sección es explicar bien cómo funciona ese enfoque y por qué creemos que tiene potencial para este proyecto.
+Este modelo funciona de otra manera: en lugar de ver la serie de tiempo como una simple lista de números, la convierte en una especie de “figura” o “curva” en un espacio de más dimensiones. Luego, sobre esa figura aplica una transformación que permite hacer la predicción. El objetivo de esta sección es explicar bien cómo funciona ese enfoque y por qué creemos que tiene potencial para este proyecto. Ademas de la implementacion de este modelo, se ha decidido implementar un modelo estadistico, de esta manera se genera una comparacion entre dos prespectivas distintas de forecasting.
 
 \subsection*{¿Qué es una \texttbf{serie de tiempo}?}
 Una serie de tiempo es una colección de observaciones tomadas en momentos consecutivos, a intervalos regulares. Por ejemplo, el número de tarjetas emitidas por RappiCard cada trimestre es una serie de tiempo univariada. En general, las series pueden ser:
@@ -13,3 +13,88 @@ Una serie de tiempo es una colección de observaciones tomadas en momentos conse
     \item \textbf{Univariadas:} una sola variable (e.g. ventas mensuales).
     \item \textbf{Multivariadas:} varias variables relacionadas medidas en paralelo (e.g. ventas + gasto en marketing).
 \end{itemize}
+
+\subsection*{Preliminares al modelaje geométrico}
+
+Antes de implementar modelos geométricos sobre una serie de tiempo, es necesario transformar esta serie en una estructura que capture su evolución temporal. A este proceso se le conoce como \textbf{embedding}, y es la piedra angular del enfoque propuesto en el artículo \textit{Geometrical Realization for Time Series Forecasting} \cite{bayeh2024gr}.
+
+\subsubsection*{Delay Embedding}
+
+Dado un conjunto de observaciones $x_1, x_2, \dots, x_n$ de una serie temporal univariada, se define el \textit{embedding de dimensión $d$ y retardo $\tau$} como la colección de vectores:
+\[
+\mathbf{x}^{(i)} = [x_i, x_{i-\tau}, x_{i - 2\tau}, \dots, x_{i - (d-1)\tau}]
+\]
+para $i$ tal que todos los índices sean positivos (es decir, $i \geq (d-1)\tau$).
+
+Este procedimiento transforma la serie original en una secuencia de puntos en $\mathbb{R}^d$, permitiendo así analizar su comportamiento como una \textbf{curva} o \textbf{superficie} en un espacio de dimensión superior. Esta idea está inspirada en el \textbf{Teorema de Takens}, el cual garantiza (bajo ciertas condiciones) que esta transformación preserva las propiedades dinámicas del sistema original.
+
+\paragraph{Ejemplo de Embedding:} Supongamos que tenemos la serie:
+\[
+[5, 8, 12, 18, 25, 35]
+\]
+Si usamos $d = 3$ y $\tau = 1$, el embedding produce:
+\[
+[ [12, 8, 5], [18, 12, 8], [25, 18, 12], [35, 25, 18] ]
+\]
+Cada uno de estos vectores puede verse como un punto en $\mathbb{R}^3$.
+
+\subsubsection*{HD-Embedding (High-Dimensional Embedding)}
+
+El embedding tradicional puede ser limitado si la serie no tiene una dinámica demasiado compleja. Sin embargo, cuando se desea capturar comportamientos no lineales y patrones más sutiles, se puede aumentar la dimensión $d$ y ajustar el retardo $\tau$ estratégicamente. A este proceso se le conoce como \textbf{embedding de alta dimensión (HD-Embedding)}.
+
+La idea detrás del HD-Embedding es que, al representar los datos en un espacio más rico, se facilita el aprendizaje de estructuras geométricas subyacentes (como curvas o superficies algebraicas) que pueden capturar las reglas implícitas de evolución temporal.
+
+Esta técnica es la base para los modelos implementados en los scripts que se presentan a continuación.
+
+\subsection*{Modelo \texttt{polynomial\_model.py}}
+
+Este modelo implementa una aproximación algebraica a la serie embebida. El objetivo es ajustar una función polinomial multivariada sobre los puntos del embedding para luego predecir valores futuros. A continuación se explica su funcionamiento:
+
+\paragraph{1. \texttt{build\_polynomial\_model(degree, alpha):}} Esta función construye un pipeline de \texttt{scikit-learn} compuesto por:
+
+\begin{itemize}
+    \item \texttt{StandardScaler()}: Estandariza los datos.
+    \item \texttt{PolynomialFeatures(degree)}: Genera todas las combinaciones polinomiales de las variables hasta el grado especificado.
+    \item \texttt{Ridge(alpha)}: Aplica una regresión Ridge (con penalización L2) para evitar sobreajuste.
+\end{itemize}
+
+\paragraph{2. \texttt{fit\_model(X, y, degree, alpha):}} Ajusta el modelo sobre el conjunto de entrenamiento. Aquí:
+\begin{itemize}
+    \item \( X \in \mathbb{R}^{m \times d} \): puntos del embedding.
+    \item \( y \in \mathbb{R}^m \): valores futuros a predecir (típicamente, el siguiente valor en la serie original).
+\end{itemize}
+
+\paragraph{3. \texttt{predict(model, x):}} Predice el siguiente valor en la serie, dado un vector de embedding.
+
+\paragraph{4. \texttt{predict\_recursive(model, init\_point, steps):}} Realiza predicciones a múltiples pasos en el futuro. Usa la predicción anterior como entrada para la siguiente, imitando una simulación del sistema dinámico.
+
+\paragraph{5. \texttt{search\_best\_degree\_alpha}:} Prueba múltiples combinaciones de grado polinomial y parámetros de regularización y selecciona la que minimiza el \textit{sMAPE} (symmetric Mean Absolute Percentage Error), útil para comparar rendimiento entre modelos con diferente escala.
+
+\paragraph{Visualización:} Se genera un gráfico 3D del embedding original y otro con los puntos predichos. Se usa color y conectividad para mostrar claramente la evolución temporal y cómo la predicción se alinea (o no) con el embedding real.
+
+\subsection*{Modelo \texttt{geo\_realization.py}}
+
+Este script implementa una lógica distinta: en vez de ajustar un modelo simple sobre el embedding, construye una \textbf{superficie polinomial} sobre el embedding completo, tratando de parametrizarlo globalmente.
+
+\paragraph{1. \texttt{fit\_surface\_to\_embedding(X, degree):}} Ajusta una superficie polinomial en $\mathbb{R}^3$ sobre los puntos del embedding. Internamente:
+\begin{itemize}
+    \item Se usa \texttt{PolynomialFeatures} para transformar los datos.
+    \item Se ajusta un modelo \texttt{LinearRegression} (sin regularización) sobre el embedding para predecir la tercera coordenada a partir de las dos primeras.
+    \item El resultado es una "variedad" (una especie de superficie algebraica) que intersecta todos los puntos del embedding.
+\end{itemize}
+
+\paragraph{2. \texttt{predecir\_desde\_superficie(punto\_actual, model):}} A partir de un nuevo punto $(x_0, x_1)$ del embedding, genera la coordenada $x_2$ usando la superficie ajustada. Esta es la lógica de predicción: buscar puntos en el embedding que sigan la dinámica estimada.
+
+\paragraph{3. \texttt{predecir\_n\_puntos(X, model, n):}} Predice $n$ puntos futuros a partir del último punto en el embedding original. Cada nuevo punto predicho se vuelve entrada para el siguiente paso.
+
+\paragraph{4. \texttt{plot\_embedding\_with\_surface(X, model, puntos\_predichos=None):}} Visualiza:
+\begin{itemize}
+    \item El embedding original (línea verde).
+    \item La superficie ajustada (malla azul translúcida).
+    \item Opcionalmente, los puntos predichos (línea roja).
+\end{itemize}
+Esto permite ver si los puntos futuros siguen la forma del embedding o se desvían.
+
+\paragraph{5. \texttt{evaluar\_modelo\_fragmentado(X, idx\_start, idx\_end):}} Permite seleccionar un fragmento del embedding para ajustar la superficie y evaluar predicciones hacia adelante y hacia atrás. Se reportan métricas como MAE y MSE entre los puntos predichos y los reales no usados en el entrenamiento.
+
+Esta lógica nos permite evaluar si la superficie está capturando correctamente la forma global del embedding, incluso más allá del rango de datos usados para el ajuste. Es una herramienta que nos ayuda a entender si el modelo generaliza bien o si está sobreajustado.

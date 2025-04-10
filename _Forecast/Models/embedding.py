@@ -24,7 +24,8 @@ plt.rcParams["text.color"] = "white"
 plt.rcParams["figure.facecolor"] = "#1e1e1e"
 plt.rcParams["savefig.facecolor"] = "#1e1e1e"
 
-path2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/rappiCard_data.csv"))
+# Path a base de datos
+path2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/rappiCard_data.csv")) 
 
 # Columna objetivo
 col_objetivo = "Demanda Total Tarjetas"
@@ -112,6 +113,34 @@ def plot_embedding_3D(X):
     plt.tight_layout()
     plt.show()
 
+# === TRANSFORMACION DE DATOS ===
+def transformar_serie(serie, metodo="log", offset=1e-9):
+    """
+    Transforma la serie univariada según el método especificado.
+
+    Parámetros:
+      serie: np.array o lista con los valores de la serie original.
+      metodo: cadena que especifica el tipo de transformación. Por ejemplo,
+              "log" para aplicar logaritmo.
+      offset: valor pequeño para evitar el logaritmo de cero (en caso de que la
+              serie tenga ceros).
+
+    Retorna:
+      serie_transformada: np.array con la serie transformada.
+    """
+    serie = np.array(serie, dtype=float)
+    if metodo == "log":
+        # Usamos log(x + offset) para evitar problemas con ceros
+        return np.log(serie + offset)
+    # Aquí se pueden agregar otras transformaciones, por ejemplo:
+    # if metodo == "log1p":
+    #     return np.log1p(serie)
+    # if metodo == "sqrt":
+    #     return np.sqrt(serie)
+    # ...
+    # Por defecto, no transforma la serie:
+    return serie
+
 # === MAIN DEMO ===
 if __name__ == "__main__":
     # Ejemplo: definimos k "mini-embeddings"
@@ -123,7 +152,12 @@ if __name__ == "__main__":
     configs = [
         (3, 1)
         # (3, 2),
-        # (3, 4)
+        # (3, 4),
+        # (3, 5),
+        # (3, 6),
+        # (5, 2),
+        # (5, 4),
+        # (7, 1)
     ]
 
     # Generar HD-embedding
@@ -146,3 +180,4 @@ if __name__ == "__main__":
     
     # Por último, si quieres ver la serie original
     plot_serie(serie)
+    # plot_serie(transformar_serie(serie))
