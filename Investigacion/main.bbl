@@ -1,0 +1,115 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bayeh et~al.(2024)Bayeh, Mouhoub, and Sadaoui]{bayeh2024gr}
+Ali Bayeh, Malek Mouhoub, and Samira Sadaoui.
+\newblock Geometrical realization for time series forecasting.
+\newblock In \emph{Proceedings of the 36th International Conference on
+  Industrial, Engineering & Other Applications of Applied Intelligent Systems
+  (IEA/AIE)}, Lecture Notes in Computer Science, Regina, Canada, 2024.
+  Springer.
+\newblock \doi{10.1007/978-3-031-50724-1_23}.
+\newblock URL
+  \url{https://link.springer.com/chapter/10.1007/978-3-031-50724-1_23}.
+
+\bibitem[Digital(2024)]{expansion_millon_2024}
+Expansión Digital.
+\newblock Rappicard alcanza los 5,107 millones de pesos en su cartera de
+  crédito.
+\newblock 2024.
+\newblock URL
+  \url{https://expansion.mx/economia/2024/09/18/rappicard-alcanza-5107-mdp-cartera-de-credito}.
+
+\bibitem[Dock(2024)]{dock2024}
+Dock.
+\newblock El ecosistema de fintechs en méxico ha crecido notablemente.
+\newblock 2024.
+\newblock URL
+  \url{https://dock.tech/es/fluid/blog/financiero/servicos-financeiros-en-mexico}.
+
+\bibitem[Expert(2024)]{fintechexpertrappicardmorosidad}
+Fintech Expert.
+\newblock Efecto fintech: El impacto de rappicard en el mercado financiero.
+\newblock \emph{Fintech Expert}, 2024.
+\newblock URL
+  \url{https://www.fintechexpert.mx/p/efecto-fintech-el-impacto-de-rappicard}.
+
+\bibitem[Financiero(2024)]{elfinanciero2024}
+El~Financiero.
+\newblock México, un mercado atractivo para las fintechs.
+\newblock 2024.
+\newblock URL
+  \url{https://www.elfinanciero.com.mx/bloomberg/2024/12/22/hay-tiro-mercado-pago-y-nu-se-alistan-para-dominar-el-mercado-fintech-en-america-latina}.
+
+\bibitem[Finnovating(2024)]{finnovating2024}
+Finnovating.
+\newblock El sector fintech de méxico: principales startups y tendencias.
+\newblock 2024.
+\newblock URL
+  \url{https://finnovating.com/news/el-sector-fintech-de-mexico-principales-startups-y-tendencias}.
+
+\bibitem[INEGI(2021)]{inegi2021}
+INEGI.
+\newblock Encuesta nacional de inclusión financiera 2021.
+\newblock 2021.
+\newblock URL
+  \url{https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2022/enif/ENIF21.pdf}.
+
+\bibitem[México(2024{\natexlab{a}})]{forbes_cartera_2024}
+Forbes México.
+\newblock Rappicard supera los 5,000 millones de pesos en cartera de crédito.
+\newblock 2024{\natexlab{a}}.
+\newblock URL
+  \url{https://www.forbes.com.mx/ad-rappicard-supera-5000-millones-pesos-cartera-credito/}.
+
+\bibitem[México(2024{\natexlab{b}})]{forbesrappibanorte}
+Forbes México.
+\newblock “hay mercado para todos”, dice rappicard sobre el banco digital
+  de banorte.
+\newblock \emph{Forbes México}, 2024{\natexlab{b}}.
+\newblock URL
+  \url{https://forbes.com.mx/hay-mercado-para-todos-dice-rappicard-sobre-el-banco-digital-de-banorte/}.
+
+\bibitem[Santander(2024)]{santander2024}
+Santander.
+\newblock El horizonte de las fintech en méxico.
+\newblock 2024.
+\newblock URL
+  \url{https://www.santander.com/es/sala-de-comunicacion/insights/el-horizonte-de-las-fintech-en-mexico}.
+
+\bibitem[Stark(2024)]{chocale_millon_2024}
+José~Ignacio Stark.
+\newblock Rappicard logra rentabilidad y supera el millón de clientes en
+  méxico: José antonio murillo.
+\newblock 2024.
+\newblock URL
+  \url{https://chocale.mx/2024/05/rappicard-tarjeta-de-credito-1-millon-de-clientes-mexico/}.
+
+\bibitem[UFlow(2024)]{uflow2024}
+UFlow.
+\newblock El crecimiento del mercado crediticio en méxico y la influencia de
+  las fintech.
+\newblock 2024.
+\newblock URL
+  \url{https://uflow.biz/blog/el-crecimiento-del-mercado-crediticio-en-mexico-y-la-influencia-de-las-fintech}.
+
+\bibitem[y~de Valores~(CNBV)(2024)]{cnbv_inclusion_2024}
+Comisión Nacional~Bancaria y~de Valores~(CNBV).
+\newblock Bases de datos de inclusión financiera.
+\newblock
+  \url{https://www.gob.mx/cnbv/acciones-y-programas/bases-de-datos-de-inclusion-financiera},
+  2024.
+\newblock Consultado en marzo de 2025.
+
+\bibitem[Índigo(2024)]{reporteindigo2024}
+Reporte Índigo.
+\newblock El mercado de fintechs en méxico ha madurado: Finnovista.
+\newblock 2024.
+\newblock URL
+  \url{https://www.reporteindigo.com/dinero/El-mercado-de-fintechs-en-Mexico-ha-madurado-Finnovista-20250225-0175.html}.
+
+\end{thebibliography}

@@ -1,0 +1,18 @@
+\babel@toc {spanish}{}\relax 
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Introducción}{2}{section.1}%
+\contentsline {section}{\numberline {2}Características de Mercado}{2}{section.2}%
+\contentsline {section}{\numberline {3}Forecast}{4}{section.3}%
+\contentsline {paragraph}{Ejemplo de Embedding:}{4}{section*.15}%
+\contentsline {paragraph}{1. \texttt {build\_polynomial\_model(degree, alpha):}}{5}{section*.18}%
+\contentsline {paragraph}{2. \texttt {fit\_model(X, y, degree, alpha):}}{5}{section*.19}%
+\contentsline {paragraph}{3. \texttt {predict(model, x):}}{5}{section*.20}%
+\contentsline {paragraph}{4. \texttt {predict\_recursive(model, init\_point, steps):}}{5}{section*.21}%
+\contentsline {paragraph}{5. \texttt {search\_best\_degree\_alpha}:}{5}{section*.22}%
+\contentsline {paragraph}{Visualización:}{5}{section*.23}%
+\contentsline {paragraph}{1. \texttt {fit\_surface\_to\_embedding(X, degree):}}{5}{section*.25}%
+\contentsline {paragraph}{2. \texttt {predecir\_desde\_superficie(punto\_actual, model):}}{6}{section*.26}%
+\contentsline {paragraph}{3. \texttt {predecir\_n\_puntos(X, model, n):}}{6}{section*.27}%
+\contentsline {paragraph}{4. \texttt {plot\_embedding\_with\_surface(X, model, puntos\_predichos=None):}}{6}{section*.28}%
+\contentsline {paragraph}{5. \texttt {evaluar\_modelo\_fragmentado(X, idx\_start, idx\_end):}}{6}{section*.29}%
+\contentsline {section}{\numberline {4}Optimización}{6}{section.4}%

@@ -1,0 +1,10 @@
+#Ignorar virtual environment
+venv/
+
+#Ignorar archivos excel (cnbv bases de datos raw)
+*.xslx
+
+# Archivos temporales
+__pycache__/
+*.pyc
+
