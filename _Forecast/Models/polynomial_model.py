@@ -401,11 +401,11 @@ if __name__=="__main__":
     best_cfg, best_mets, all_res = search_best_degree_alpha(
         X_full,
         train_ratio=0.7,
-        degrees=np.arange(0,4,1),
-        alphas=np.arange(0,30,0.5),
+        degrees=np.arange(1,5,1),
+        alphas=np.arange(0,600,1),
         scale=True,
-        reg_type='lasso',
-        forecast_mode='recursive',
+        reg_type='lasso', # (ridge) // (lasso) // (linear_regresion)
+        forecast_mode='recursive', # recursive // single_step
         plot=True,
         invertir=False
     )
