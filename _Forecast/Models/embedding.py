@@ -28,7 +28,7 @@ plt.rcParams["savefig.facecolor"] = "#1e1e1e"
 path2 = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../BaseDeDatos/rappiCard_data.csv")) 
 
 # Columna objetivo
-col_objetivo = "Demanda Total Tarjetas"
+col_objetivo = "# de Usuarios"
 
 # Carga de la serie
 df = pd.read_csv(path2, encoding="latin1")

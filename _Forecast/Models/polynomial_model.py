@@ -8,6 +8,8 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
+plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-light.mplstyle')
+
 # =======================
 #    FUNCION sMAPE
 # =======================
@@ -44,6 +46,29 @@ def cargar_embedding(path_csv):
     X_feats = X_all[:, :-1]
     y_target= X_all[:, -1]
     return X_feats, y_target, X_all
+
+# ===================================================================
+#  CARGAR CSV => Ultima columna = target, resto = features
+# ===================================================================
+def cargar_serie(path_csv, col_serie):
+    """
+    Para cuando en vez de un embedding tienes solo una columna de serie de tiempo.
+    - path_csv: ruta al CSV con al menos la columna col_serie.
+    - col_serie: nombre de la columna (string).
+    Devuelve (X_feats, y_target, X_full) compatibles con el resto del código.
+    """
+    df = pd.read_csv(path_csv)
+
+    y = df[col_serie].dropna().to_numpy().astype(float)
+    N = len(y)
+
+    # Feature = tiempo t = 0,1,...,N-1
+    X_feats = np.arange(N).reshape(-1,1)         # (N,1)
+
+    # Construimos X_full = [t, y_t]
+    X_full  = np.hstack([X_feats, y.reshape(-1,1)])
+
+    return X_feats, y, X_full
 
 # ===================================================================
 #  AJUSTE SUPERFICIE POLINOMIAL (X_feats->Y)
@@ -391,7 +416,9 @@ def search_best_degree_alpha(
 if __name__=="__main__":
     base_dir = os.path.dirname(os.path.abspath(__file__))
     path_csv = os.path.join(base_dir,"..","..","BaseDeDatos","embedding.csv")
+    path_csv2 = os.path.join(base_dir,"..","..","BaseDeDatos","rappiCard_data.csv")
 
+    
     # 1) Leer el embedding
     from pprint import pprint
     X_feats, y_target, X_full = cargar_embedding(path_csv)
@@ -401,10 +428,10 @@ if __name__=="__main__":
     best_cfg, best_mets, all_res = search_best_degree_alpha(
         X_full,
         train_ratio=0.7,
-        degrees=np.arange(0,4,1),
-        alphas=np.arange(0,30,0.5),
+        degrees=np.arange(0,5,1),
+        alphas=np.arange(0,10,0.1),
         scale=True,
-        reg_type='lasso',
+        reg_type='ridge',
         forecast_mode='recursive',
         plot=True,
         invertir=False
