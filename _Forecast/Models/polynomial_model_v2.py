@@ -159,6 +159,7 @@ def forecast_n_steps_full(
         f_s     = scaler.transform(last[:-1].reshape(1, -1))
         f_p     = poly.transform(f_s)
         p       = model.predict(f_p)[0]
+        p       = max(p, 0.0)
         preds.append(p)
         # desplaza el window y añade la nueva predicción
         new_row = np.roll(last, -1)
