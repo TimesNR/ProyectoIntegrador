@@ -21,33 +21,34 @@ ChartJS.register(
   Legend
 );
 
-interface Dataset {
-  label: string;
-  data: number[];
-  backgroundColor: string;
-}
-
-interface ForecastData {
-  labels: string[];
-  datasets: Dataset[];
-}
-
 interface ForecastChartProps {
-  data: ForecastData;
+  data: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor: string;
+    }[];
+  };
 }
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({ data }) => {
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Pronóstico de Demanda',
       },
     },
   };
 
   return (
-    <div className="chart-container">
+    <div className="chart-container" style={{ height: '500px', width: '100%' }}>
       <Line data={data} options={options} />
     </div>
   );
