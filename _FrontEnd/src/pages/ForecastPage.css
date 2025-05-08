@@ -1,0 +1,29 @@
+/* Estructura principal */
+#forecast .inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  /* Grid para gráfico y métricas */
+  .features {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  /* Adaptación responsive */
+  @media (max-width: 768px) {
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Estilos para los controles */
+  .forecast-controls {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
