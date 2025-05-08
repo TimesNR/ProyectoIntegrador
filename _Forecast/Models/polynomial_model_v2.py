@@ -224,7 +224,9 @@ def main():
     cols = [
         "Entregas Black",
         "Entregas Ocean Plastic",
+        "Entregas Cardjolote Black",
         "Demanda Total Tarjetas",
+        "# de Usuarios"
         # … otras columnas …
     ]
     embedding_dir = os.path.abspath(
@@ -233,14 +235,15 @@ def main():
     )
     dimension   = 3
     delay       = 1
-    train_ratio = 0.75
+    train_ratio = 0.7
     degrees     = [1, 2, 3, 4]
     alphas      = [0.01, 0.1, 1.0, 10.0, 100.0]
-    n_meses     = 6  # <-- número de pasos a forecastear
+    n_meses     = 6  # número de pasos a forecastear
     # -------------------------------------------------------
 
     df = pd.read_csv(path_csv, encoding="latin1")
-    rows = []
+    rows_metrics = []
+    rows_forecasts = []
 
     for col in cols:
         # 1) Procesa la serie (embedding, búsqueda, train/test, plot)
@@ -256,37 +259,47 @@ def main():
             degrees=degrees,
             alphas=alphas
         )
+        rows_metrics.append(metrics)
 
-        # 2) Genera el forecast a n_meses usando **todos** los datos
+        # 2) Genera el forecast a n_meses usando todos los datos
         serie = df[col].dropna().astype(float).values
         future = forecast_n_steps_full(
             serie=serie,
             dimension=dimension,
             delay=delay,
-            degree=metrics["degree"],
-            alpha=metrics["alpha"],
+            degree=metrics['degree'],
+            alpha=metrics['alpha'],
             n_steps=n_meses
         )
 
-        # 3) Almacena el forecast en el diccionario de métricas
-        metrics["forecast"] = future
-        rows.append(metrics)
+        # Construye diccionario de forecast
+        forecast_dict = {'series': series_name}
+        for i, val in enumerate(future, start=1):
+            forecast_dict[f't+{i}'] = val
+        rows_forecasts.append(forecast_dict)
 
-        # 4) (Opcional) Muestra el forecast
+        # 3) Muestra el forecast en consola
         print(f"\nForecast a {n_meses} meses para '{series_name}':")
         print(future)
 
-    # 5) DataFrame final de métricas y forecasts
-    df_metrics = pd.DataFrame(rows)
-    print("\n=== Métricas y Forecasts finales ===")
-    print(df_metrics[["series", "degree", "alpha", "mse", "mae", "smape"]]
-          .to_string(index=False))
+    # DataFrame final de métricas y forecasts
+    df_metrics   = pd.DataFrame(rows_metrics)
+    df_forecasts = pd.DataFrame(rows_forecasts)
 
-    # 6) (Opcional) Exportar métricas
-    # out_metrics = os.path.join(embedding_dir, "metrics_with_forecast.csv")
-    # df_metrics.to_csv(out_metrics, index=False)
-    # print(f"[INFO] Métricas y forecasts exportados en {out_metrics}")
+    # Rutas de salida
+    out_metrics_csv    = os.path.join(embedding_dir, "..", 'polynomial_metrics.csv')
+    out_metrics_xlsx   = os.path.join(embedding_dir, "..", 'polynomial_metrics.xlsx')
+    out_forecast_csv   = os.path.join(embedding_dir, "..", 'polynomial_forecasts.csv')
+    out_forecast_xlsx  = os.path.join(embedding_dir, "..", 'polynomial_forecasts.xlsx')
+
+    # Guardar archivos
+    df_metrics.to_csv(out_metrics_csv,   index=False)
+    df_metrics.to_excel(out_metrics_xlsx, index=False)
+    df_forecasts.to_csv(out_forecast_csv, index=False)
+    df_forecasts.to_excel(out_forecast_xlsx, index=False)
+
+    print(f"\n[INFO] Métricas guardadas en:\n  • {out_metrics_csv}\n  • {out_metrics_xlsx}")
+    print(f"[INFO] Forecasts guardados en:\n  • {out_forecast_csv}\n  • {out_forecast_xlsx}")
 
 if __name__ == "__main__":
     main()
-    
