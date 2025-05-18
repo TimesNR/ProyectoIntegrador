@@ -4,6 +4,9 @@ import DatabasePage from './pages/DatabasePage';
 import SecurityPage from './pages/SecurityPage';
 import InfoPage from './pages/InfoPage'; 
 import MainLayout from './components/layout/MainLayout'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; 
+import "bootstrap"
 
 const App = () => {
   return (

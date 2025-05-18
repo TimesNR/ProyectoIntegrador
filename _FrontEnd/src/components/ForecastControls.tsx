@@ -4,6 +4,10 @@ import './ForecastControls.css';
 interface ForecastControlsProps {
   selectedModel: 'ARIMA' | 'Geometric';
   onModelSelected: (model: 'ARIMA' | 'Geometric') => void;
+  timeRange: 'semanal' | 'mensual' | 'anual'; // <-- Agregado
+  onTimeRangeChange: (range: 'semanal' | 'mensual' | 'anual') => void; // <-- Agregado si lo necesitas
+  // activeBrand: string; // <-- También agrégalo si se usa
+  // onBrandChange: (brand: string) => void; // <-- También agrégalo si se usa
 }
 
 export const ForecastControls: React.FC<ForecastControlsProps> = ({

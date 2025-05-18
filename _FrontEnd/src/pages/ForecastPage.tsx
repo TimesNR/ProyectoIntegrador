@@ -65,15 +65,20 @@ const forecastData: ForecastData = {
 
 const ForecastPage = () => {
   const [timeRange, setTimeRange] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
-  const [activeBrand, setActiveBrand] = useState<string>('Mejora');
+  const [modelSelected, setModelSelected] = useState<'ARIMA' | 'Geometric'>('ARIMA');
+  // const [activeBrand, setActiveBrand] = useState<string>('Mejora');
 
   const handleTimeRangeChange = (range: 'semanal' | 'mensual' | 'anual') => {
     setTimeRange(range);
   };
 
-  const handleBrandChange = (brand: string) => {
-    setActiveBrand(brand);
+  const handleModelSelected = (range: "ARIMA" | "Geometric") =>{
+    setModelSelected(range);
   };
+
+  // const handleBrandChange = (brand: string) => {
+  //   setActiveBrand(brand);
+  // };
 
   return (
     <div>
@@ -81,8 +86,10 @@ const ForecastPage = () => {
       <ForecastControls 
         timeRange={timeRange}
         onTimeRangeChange={handleTimeRangeChange}
-        activeBrand={activeBrand}
-        onBrandChange={handleBrandChange}
+        selectedModel={modelSelected}
+        onModelSelected = {handleModelSelected}
+        // activeBrand={activeBrand}
+        // onBrandChange={handleBrandChange}
       />
       <ForecastChart data={forecastData[timeRange]} />
       <MetricCard title="Resumen" value="1234" />
