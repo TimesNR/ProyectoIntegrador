@@ -17,6 +17,8 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
+plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-light.mplstyle')
+
 def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Symmetric Mean Absolute Percentage Error (en %)."""
     eps = 1e-9
