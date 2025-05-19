@@ -24,6 +24,13 @@ def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     den = np.abs(y_true) + np.abs(y_pred) + eps
     return 100. * np.mean(2. * num / den)
 
+def mase(y_true, y_pred, y_train, m=1):
+    """Mean Absolute Scaled Error (MASE)."""
+    n = len(y_train)
+    d = np.abs(np.diff(y_train, n=m)).sum() / (n - m)
+    errors = np.abs(y_true - y_pred)
+    return errors.mean() / d
+
 def takens_embedding(serie: np.ndarray, dimension: int, delay: int) -> np.ndarray:
     """
     Genera embedding de Takens:
@@ -41,27 +48,20 @@ def takens_embedding(serie: np.ndarray, dimension: int, delay: int) -> np.ndarra
     return np.array(emb, dtype=float)
 
 def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: float):
-    """
-    Entrena Ridge sobre features polinomiales y evalúa en train + rolling test.
-    Retorna (y_tr, y_tr_pred, y_te, y_te_pred, metrics_dict, train_size).
-    """
     n = len(X_full)
     train_size = int(train_ratio * n)
     X_tr, X_te = X_full[:train_size], X_full[train_size:]
     X_tr_feats, y_tr = X_tr[:, :-1], X_tr[:, -1]
     y_te = X_te[:, -1]
 
-    # Preprocesado
     scaler = StandardScaler().fit(X_tr_feats)
     X_tr_s = scaler.transform(X_tr_feats)
-    poly   = PolynomialFeatures(degree).fit(X_tr_s)
+    poly = PolynomialFeatures(degree).fit(X_tr_s)
     X_tr_p = poly.transform(X_tr_s)
 
-    # Entrenamiento
     model = Ridge(alpha=alpha).fit(X_tr_p, y_tr)
     y_tr_pred = model.predict(X_tr_p)
 
-    # Rolling prediction en test
     emb_ext = X_tr.copy()
     preds = []
     for _ in range(len(X_te)):
@@ -75,26 +75,21 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
         emb_ext = np.vstack([emb_ext, new_row])
     y_te_pred = np.array(preds)
 
-    # Métricas
     mets = {
-        "mse":   mean_squared_error(y_te, y_te_pred),
-        "mae":   mean_absolute_error(y_te, y_te_pred),
-        "smape": smape(y_te, y_te_pred)
+        "mse": mean_squared_error(y_te, y_te_pred),
+        "mae": mean_absolute_error(y_te, y_te_pred),
+        "mase": mase(y_te, y_te_pred, y_tr)
     }
     return y_tr, y_tr_pred, y_te, y_te_pred, mets, train_size
 
 def grid_search(X_full: np.ndarray, train_ratio: float, degrees: list, alphas: list):
-    """
-    Prueba combinaciones (degree, alpha), devuelve DataFrame de resultados
-    y el mejor (degree, alpha) según sMAPE mínimo.
-    """
     results = []
     for d in degrees:
         for a in alphas:
             _, _, _, _, mets, _ = train_evaluate(X_full, train_ratio, d, a)
             results.append({"degree": d, "alpha": a, **mets})
     df = pd.DataFrame(results)
-    best = df.loc[df["smape"].idxmin()]
+    best = df.loc[df["mase"].idxmin()]
     return df, int(best["degree"]), float(best["alpha"])
 
 def plot_performance(series_name, y_tr, y_tr_pred, y_te, y_te_pred, train_size):
@@ -159,6 +154,7 @@ def forecast_n_steps_full(
         f_s     = scaler.transform(last[:-1].reshape(1, -1))
         f_p     = poly.transform(f_s)
         p       = model.predict(f_p)[0]
+        p       = max(p, 0.0)
         preds.append(p)
         # desplaza el window y añade la nueva predicción
         new_row = np.roll(last, -1)
@@ -224,7 +220,8 @@ def main():
     cols = [
         "Entregas Black",
         "Entregas Ocean Plastic",
-        "Demanda Total Tarjetas",
+        "Entregas Cardjolote Black",
+        "Demanda Total Tarjetas"
         # … otras columnas …
     ]
     embedding_dir = os.path.abspath(
@@ -233,14 +230,15 @@ def main():
     )
     dimension   = 3
     delay       = 1
-    train_ratio = 0.75
+    train_ratio = 0.7
     degrees     = [1, 2, 3, 4]
     alphas      = [0.01, 0.1, 1.0, 10.0, 100.0]
-    n_meses     = 6  # <-- número de pasos a forecastear
+    n_meses     = 6  # número de pasos a forecastear
     # -------------------------------------------------------
 
     df = pd.read_csv(path_csv, encoding="latin1")
-    rows = []
+    rows_metrics = []
+    rows_forecasts = []
 
     for col in cols:
         # 1) Procesa la serie (embedding, búsqueda, train/test, plot)
@@ -256,37 +254,44 @@ def main():
             degrees=degrees,
             alphas=alphas
         )
+        rows_metrics.append(metrics)
 
-        # 2) Genera el forecast a n_meses usando **todos** los datos
+        # 2) Genera el forecast a n_meses usando todos los datos
         serie = df[col].dropna().astype(float).values
         future = forecast_n_steps_full(
             serie=serie,
             dimension=dimension,
             delay=delay,
-            degree=metrics["degree"],
-            alpha=metrics["alpha"],
+            degree=metrics['degree'],
+            alpha=metrics['alpha'],
             n_steps=n_meses
         )
 
-        # 3) Almacena el forecast en el diccionario de métricas
-        metrics["forecast"] = future
-        rows.append(metrics)
+        # Construye diccionario de forecast
+        forecast_dict = {'series': series_name}
+        for i, val in enumerate(future, start=1):
+            forecast_dict[f't+{i}'] = val
+        rows_forecasts.append(forecast_dict)
 
-        # 4) (Opcional) Muestra el forecast
+        # 3) Muestra el forecast en consola
         print(f"\nForecast a {n_meses} meses para '{series_name}':")
         print(future)
 
-    # 5) DataFrame final de métricas y forecasts
-    df_metrics = pd.DataFrame(rows)
-    print("\n=== Métricas y Forecasts finales ===")
-    print(df_metrics[["series", "degree", "alpha", "mse", "mae", "smape"]]
-          .to_string(index=False))
+    # DataFrame final de métricas y forecasts
+    df_metrics   = pd.DataFrame(rows_metrics)
+    df_forecasts = pd.DataFrame(rows_forecasts)
 
-    # 6) (Opcional) Exportar métricas
-    # out_metrics = os.path.join(embedding_dir, "metrics_with_forecast.csv")
-    # df_metrics.to_csv(out_metrics, index=False)
-    # print(f"[INFO] Métricas y forecasts exportados en {out_metrics}")
+    # Rutas de salida
+    out_metrics_csv    = os.path.join(embedding_dir, "..", 'polynomial_metrics.csv')
+    out_forecast_csv   = os.path.join(embedding_dir, "..", 'polynomial_forecasts.csv')
+
+    # Guardar archivos
+    df_metrics.to_csv(out_metrics_csv,   index=False)
+    df_forecasts.to_csv(out_forecast_csv, index=False)
+
+
+    print(f"\n[INFO] Métricas guardadas en:\n  • {out_metrics_csv}")
+    print(f"[INFO] Forecasts guardados en:\n  • {out_forecast_csv}")
 
 if __name__ == "__main__":
     main()
-    
