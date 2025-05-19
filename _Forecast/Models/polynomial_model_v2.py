@@ -24,6 +24,13 @@ def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     den = np.abs(y_true) + np.abs(y_pred) + eps
     return 100. * np.mean(2. * num / den)
 
+def mase(y_true, y_pred, y_train, m=1):
+    """Mean Absolute Scaled Error (MASE)."""
+    n = len(y_train)
+    d = np.abs(np.diff(y_train, n=m)).sum() / (n - m)
+    errors = np.abs(y_true - y_pred)
+    return errors.mean() / d
+
 def takens_embedding(serie: np.ndarray, dimension: int, delay: int) -> np.ndarray:
     """
     Genera embedding de Takens:
@@ -41,27 +48,20 @@ def takens_embedding(serie: np.ndarray, dimension: int, delay: int) -> np.ndarra
     return np.array(emb, dtype=float)
 
 def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: float):
-    """
-    Entrena Ridge sobre features polinomiales y evalúa en train + rolling test.
-    Retorna (y_tr, y_tr_pred, y_te, y_te_pred, metrics_dict, train_size).
-    """
     n = len(X_full)
     train_size = int(train_ratio * n)
     X_tr, X_te = X_full[:train_size], X_full[train_size:]
     X_tr_feats, y_tr = X_tr[:, :-1], X_tr[:, -1]
     y_te = X_te[:, -1]
 
-    # Preprocesado
     scaler = StandardScaler().fit(X_tr_feats)
     X_tr_s = scaler.transform(X_tr_feats)
-    poly   = PolynomialFeatures(degree).fit(X_tr_s)
+    poly = PolynomialFeatures(degree).fit(X_tr_s)
     X_tr_p = poly.transform(X_tr_s)
 
-    # Entrenamiento
     model = Ridge(alpha=alpha).fit(X_tr_p, y_tr)
     y_tr_pred = model.predict(X_tr_p)
 
-    # Rolling prediction en test
     emb_ext = X_tr.copy()
     preds = []
     for _ in range(len(X_te)):
@@ -75,26 +75,21 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
         emb_ext = np.vstack([emb_ext, new_row])
     y_te_pred = np.array(preds)
 
-    # Métricas
     mets = {
-        "mse":   mean_squared_error(y_te, y_te_pred),
-        "mae":   mean_absolute_error(y_te, y_te_pred),
-        "smape": smape(y_te, y_te_pred)
+        "mse": mean_squared_error(y_te, y_te_pred),
+        "mae": mean_absolute_error(y_te, y_te_pred),
+        "mase": mase(y_te, y_te_pred, y_tr)
     }
     return y_tr, y_tr_pred, y_te, y_te_pred, mets, train_size
 
 def grid_search(X_full: np.ndarray, train_ratio: float, degrees: list, alphas: list):
-    """
-    Prueba combinaciones (degree, alpha), devuelve DataFrame de resultados
-    y el mejor (degree, alpha) según sMAPE mínimo.
-    """
     results = []
     for d in degrees:
         for a in alphas:
             _, _, _, _, mets, _ = train_evaluate(X_full, train_ratio, d, a)
             results.append({"degree": d, "alpha": a, **mets})
     df = pd.DataFrame(results)
-    best = df.loc[df["smape"].idxmin()]
+    best = df.loc[df["mase"].idxmin()]
     return df, int(best["degree"]), float(best["alpha"])
 
 def plot_performance(series_name, y_tr, y_tr_pred, y_te, y_te_pred, train_size):
@@ -226,8 +221,7 @@ def main():
         "Entregas Black",
         "Entregas Ocean Plastic",
         "Entregas Cardjolote Black",
-        "Demanda Total Tarjetas",
-        "# de Usuarios"
+        "Demanda Total Tarjetas"
         # … otras columnas …
     ]
     embedding_dir = os.path.abspath(
@@ -289,18 +283,15 @@ def main():
 
     # Rutas de salida
     out_metrics_csv    = os.path.join(embedding_dir, "..", 'polynomial_metrics.csv')
-    out_metrics_xlsx   = os.path.join(embedding_dir, "..", 'polynomial_metrics.xlsx')
     out_forecast_csv   = os.path.join(embedding_dir, "..", 'polynomial_forecasts.csv')
-    out_forecast_xlsx  = os.path.join(embedding_dir, "..", 'polynomial_forecasts.xlsx')
 
     # Guardar archivos
     df_metrics.to_csv(out_metrics_csv,   index=False)
-    df_metrics.to_excel(out_metrics_xlsx, index=False)
     df_forecasts.to_csv(out_forecast_csv, index=False)
-    df_forecasts.to_excel(out_forecast_xlsx, index=False)
 
-    print(f"\n[INFO] Métricas guardadas en:\n  • {out_metrics_csv}\n  • {out_metrics_xlsx}")
-    print(f"[INFO] Forecasts guardados en:\n  • {out_forecast_csv}\n  • {out_forecast_xlsx}")
+
+    print(f"\n[INFO] Métricas guardadas en:\n  • {out_metrics_csv}")
+    print(f"[INFO] Forecasts guardados en:\n  • {out_forecast_csv}")
 
 if __name__ == "__main__":
     main()
