@@ -3,7 +3,7 @@
 Pipeline multiserie de forecasting polinomial:
   - Takens embedding
   - Grid search (grado, alpha)
-  - Entrenamiento + evaluación (MAE, MSE, sMAPE)
+  - Entrenamiento + evaluación (MAE, MSE, MASE)
   - Gráfica de desempeño por serie
   - Acumulación de métricas en DataFrame para exportar
 """
@@ -233,7 +233,7 @@ def main():
     dimension   = 3
     delay       = 1
     train_ratio = 0.7
-    degrees     = [1, 2, 3, 4]
+    degrees     = [1, 2, 3, 4, 5, 6, 7, 8]
     alphas      = [0.01, 0.1, 1.0, 10.0, 100.0]
     n_meses     = 6  # número de pasos a forecastear
     # -------------------------------------------------------
