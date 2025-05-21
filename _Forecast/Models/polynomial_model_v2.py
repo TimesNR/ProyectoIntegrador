@@ -222,8 +222,7 @@ def main():
     cols = [
         "Entregas Black",
         "Entregas Ocean Plastic",
-        "Entregas Cardjolote Black",
-        "Demanda Total Tarjetas"
+        "Entregas Cardjolote Black"
         # … otras columnas …
     ]
     embedding_dir = os.path.abspath(
