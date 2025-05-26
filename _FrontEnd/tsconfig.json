@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "DataTable.tsx", "DataTable.tsx"  ]
 }
