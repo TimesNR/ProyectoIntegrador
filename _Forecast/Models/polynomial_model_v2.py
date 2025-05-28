@@ -3,7 +3,7 @@
 Pipeline multiserie de forecasting polinomial:
   - Takens embedding
   - Grid search (grado, alpha)
-  - Entrenamiento + evaluación (MAE, MSE, MASE)
+  - Entrenamiento + evaluación (MAE, MSE, MASE, sMAPE)
   - Gráfica de desempeño por serie
   - Acumulación de métricas en DataFrame para exportar
 """
@@ -81,7 +81,8 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
     mets = {
         "mse": mean_squared_error(y_te, y_te_pred),
         "mae": mean_absolute_error(y_te, y_te_pred),
-        "mase": mase(y_te, y_te_pred, y_tr)
+        "mase": mase(y_te, y_te_pred, y_tr),
+        "smape": smape(y_te, y_te_pred)
     }
     return y_tr, y_tr_pred, y_te, y_te_pred, mets, train_size
 
@@ -218,7 +219,8 @@ def process_series(
     mets = {
         "mse":  mean_squared_error(y_te,       y_te_pred),
         "mae":  mean_absolute_error(y_te,      y_te_pred),
-        "mase": mase(y_te,       y_te_pred, y_tr)
+        "mase": mase(y_te,       y_te_pred, y_tr),
+        "smape": smape(y_te,      y_te_pred)
     }
 
     # 6) Gráfica
