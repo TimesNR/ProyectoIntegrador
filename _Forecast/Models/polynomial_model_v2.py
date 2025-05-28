@@ -249,7 +249,13 @@ def main():
         "Entregas Pride Colors",
         "Entregas Cardlaveritas",
         "Entregas Cardtrinas",
-        "Entregas Cardjolote White"
+        "Entregas Cardjolote White",
+        "Entregas PlayCard",
+        "Entregas Gotica",
+        "Entregas Pride 2024",
+        "Entregas Minion Rayo",
+        "Entregas Minion Mega",
+        "Entregas Cardlaveritas 2024"
     ]
     # Dataset BancaCred (con columna Fecha)
     bancacred_csv  = os.path.join(base_dir, "BD_HIST_BANCACRED_IF.csv")
