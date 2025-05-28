@@ -57,7 +57,7 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
     X_tr_feats, y_tr = X_tr[:, :-1], X_tr[:, -1]
     y_te = X_te[:, -1]
 
-    scaler = MinMaxScaler(feature_range=(0,1)).fit(X_tr_feats)
+    scaler = StandardScaler().fit(X_tr_feats)
     X_tr_s = scaler.transform(X_tr_feats)
     poly = PolynomialFeatures(degree).fit(X_tr_s)
     X_tr_p = poly.transform(X_tr_s)
@@ -142,7 +142,7 @@ def forecast_n_steps_full(
     y        = X_full[:,  -1]
 
     # 3) Escalado + polinomio
-    scaler = MinMaxScaler(feature_range=(0,1)).fit(X_full[:, :-1])
+    scaler = StandardScaler().fit(X_full[:, :-1])
     X_s    = scaler.transform(X_feats)
     poly   = PolynomialFeatures(degree).fit(X_s)
     X_p    = poly.transform(X_s)
@@ -188,7 +188,7 @@ def process_series(
     """
     # 1) Leer y normalizar la serie a [0,1]
     raw = df[col].dropna().astype(float).values.reshape(-1,1)
-    scaler_serie = MinMaxScaler(feature_range=(0,1)).fit(raw)
+    scaler_serie = StandardScaler().fit(raw)
     serie_norm   = scaler_serie.transform(raw).ravel()
 
     # 2) Embedding sobre la serie escalada
@@ -271,7 +271,7 @@ def main():
     delay       = 1
     train_ratio = 0.71
     degrees_rappi     = list(range(1, 11))
-    degrees_bancacred = list(range(1, 11))
+    degrees_bancacred = list(range(1, 3))
     alphas      = [0.01, 0.1, 1.0, 10.0, 100.0]
     n_meses     = 6
     # -------------------------------------------------------
