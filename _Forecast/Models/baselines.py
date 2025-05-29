@@ -12,183 +12,172 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-# def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-#     """
-#     Symmetric Mean Absolute Percentage Error.
-#     """
-#     eps = 1e-9
-#     num = np.abs(y_true - y_pred)
-#     den = np.abs(y_true) + np.abs(y_pred) + eps
-#     return 100. * np.mean(2. * num / den)
+def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """
+    Symmetric Mean Absolute Percentage Error.
+    """
+    eps = 1e-9
+    num = np.abs(y_true - y_pred)
+    den = np.abs(y_true) + np.abs(y_pred) + eps
+    return 100. * np.mean(2. * num / den)
 
-# def split_series(series: np.ndarray, train_ratio: float):
-#     """
-#     Separa la serie en train y test según proporción.
-#     """
-#     n = len(series)
-#     train_size = int(train_ratio * n)
-#     return series[:train_size], series[train_size:], train_size
+def split_series(series: np.ndarray, train_ratio: float):
+    """
+    Separa la serie en train y test según proporción.
+    """
+    n = len(series)
+    train_size = int(train_ratio * n)
+    return series[:train_size], series[train_size:], train_size
 
-# def baseline_naive(y_train: np.ndarray, n_forecast: int) -> np.ndarray:
-#     """
-#     Forecast naive: repite el último valor de entrenamiento.
-#     """
-#     last = y_train[-1]
-#     return np.full(n_forecast, last)
+def baseline_naive(y_train: np.ndarray, n_forecast: int) -> np.ndarray:
+    """
+    Forecast naive: repite el último valor de entrenamiento.
+    """
+    last = y_train[-1]
+    return np.full(n_forecast, last)
 
-# def baseline_moving_average(y_train: np.ndarray, n_forecast: int, window: int) -> np.ndarray:
-#     """
-#     Forecast con media móvil:
-#     Para cada paso de prueba, promedia los últimos 'window' valores vistos.
-#     """
-#     history = list(y_train)
-#     preds = []
-#     for _ in range(n_forecast):
-#         window_vals = history[-window:]
-#         preds.append(np.mean(window_vals))
-#         history.append(np.mean(window_vals))
-#     return np.array(preds)
+def baseline_moving_average(y_train: np.ndarray, n_forecast: int, window: int) -> np.ndarray:
+    """
+    Forecast con media móvil:
+    Para cada paso de prueba, promedia los últimos 'window' valores vistos.
+    """
+    history = list(y_train)
+    preds = []
+    for _ in range(n_forecast):
+        window_vals = history[-window:]
+        preds.append(np.mean(window_vals))
+        history.append(np.mean(window_vals))
+    return np.array(preds)
 
-# def baseline_exp_smoothing(y_train: np.ndarray, n_forecast: int, alpha: float) -> np.ndarray:
-#     """
-#     Suavizado exponencial simple:
-#     Ajusta nivel en muestra y pronostica futuros como último nivel.
-#     """
-#     level = y_train[0]
-#     for t in range(1, len(y_train)):
-#         level = alpha * y_train[t] + (1 - alpha) * level
-#     return np.full(n_forecast, level)
+def baseline_exp_smoothing(y_train: np.ndarray, n_forecast: int, alpha: float) -> np.ndarray:
+    """
+    Suavizado exponencial simple:
+    Ajusta nivel en muestra y pronostica futuros como último nivel.
+    """
+    level = y_train[0]
+    for t in range(1, len(y_train)):
+        level = alpha * y_train[t] + (1 - alpha) * level
+    return np.full(n_forecast, level)
 
-# def evaluate_forecast(y_test: np.ndarray, y_pred: np.ndarray) -> dict:
-#     """
-#     Calcula MAE, MSE y sMAPE entre test y predicción.
-#     """
-#     return {
-#         "mse": mean_squared_error(y_test, y_pred),
-#         "mae": mean_absolute_error(y_test, y_pred),
-#         "smape": smape(y_test, y_pred)
-#     }
+def evaluate_forecast(y_test: np.ndarray, y_pred: np.ndarray) -> dict:
+    """
+    Calcula MAE, MSE y sMAPE entre test y predicción.
+    """
+    return {
+        "mse": mean_squared_error(y_test, y_pred),
+        "mae": mean_absolute_error(y_test, y_pred),
+        "smape": smape(y_test, y_pred)
+    }
 
-# def plot_baselines(y_train, y_test, forecasts: dict, train_size: int):
-#     """
-#     Grafica la serie real y los forecasts de cada baseline.
-#     """
-#     idx_train = np.arange(train_size)
-#     idx_test  = np.arange(train_size, train_size + len(y_test))
+def plot_baselines(y_train, y_test, forecasts: dict, train_size: int):
+    """
+    Grafica la serie real y los forecasts de cada baseline.
+    """
+    idx_train = np.arange(train_size)
+    idx_test  = np.arange(train_size, train_size + len(y_test))
 
-#     plt.figure()
-#     plt.plot(idx_train, y_train, label="Real - Entrenamiento")
-#     plt.plot(idx_test,  y_test,  label="Real - Prueba", color="black")
+    plt.figure()
+    plt.plot(idx_train, y_train, label="Real - Entrenamiento")
+    plt.plot(idx_test,  y_test,  label="Real - Prueba", color="black")
 
-#     for name, y_pred in forecasts.items():
-#         plt.plot(idx_test, y_pred, linestyle="--", label=f"{name}")
+    for name, y_pred in forecasts.items():
+        plt.plot(idx_test, y_pred, linestyle="--", label=f"{name}")
 
-#     plt.title("Comparativa de Baselines")
-#     plt.xlabel("Índice de muestra")
-#     plt.ylabel("Valor de la serie")
-#     plt.legend()
-#     plt.tight_layout()
-#     plt.show()
+    plt.title("Comparativa de Baselines")
+    plt.xlabel("Índice de muestra")
+    plt.ylabel("Valor de la serie")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
-# def main():
-#     # -------- Parámetros --------
-#     # Generar ruta absoluta al CSV de la serie de tiempo
-#     ruta_csv = os.path.abspath(
-#         os.path.join(
-#             os.path.dirname(__file__),
-#             "..",
-#             "..",
-#             "BaseDeDatos",
-#             "DATOSLIMPIOSRAPPI.csv"
-#         )
-#     )
-#     columna      = "Entregas Black"
-#     train_ratio  = 0.75
+def main():
+    # -------- Parámetros --------
+    # Generar ruta absoluta al CSV de la serie de tiempo
+    ruta_csv = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "BaseDeDatos",
+            "DATOSLIMPIOSRAPPI.csv"
+        )
+    )
+    columna      = "Entregas Black"
+    train_ratio  = 0.75
 
-#     # Parámetros de los baselines
-#     window_ma    = 6     # ventana para media móvil
-#     alpha_smooth = 0.3   # coeficiente para suavizado exponencial
-#     # ---------------------------
+    # Parámetros de los baselines
+    window_ma    = 6     # ventana para media móvil
+    alpha_smooth = 0.3   # coeficiente para suavizado exponencial
+    # ---------------------------
 
-#     # Cargar y preparar serie
-#     df     = pd.read_csv(ruta_csv, encoding="latin1")
-#     serie  = df[columna].dropna().astype(float).values
+    # Cargar y preparar serie
+    df     = pd.read_csv(ruta_csv, encoding="latin1")
+    serie  = df[columna].dropna().astype(float).values
 
-#     # Separar train/test
-#     y_train, y_test, train_size = split_series(serie, train_ratio)
-#     n_forecast = len(y_test)
+    # Separar train/test
+    y_train, y_test, train_size = split_series(serie, train_ratio)
+    n_forecast = len(y_test)
 
-#     # Generar forecasts de cada baseline
-#     preds = {
-#         "Naive": baseline_naive(y_train, n_forecast),
-#         f"MovAvg_w={window_ma}": baseline_moving_average(y_train, n_forecast, window_ma),
-#         f"ExpSmooth_α={alpha_smooth}": baseline_exp_smoothing(y_train, n_forecast, alpha_smooth)
-#     }
+    # Generar forecasts de cada baseline
+    preds = {
+        "Naive": baseline_naive(y_train, n_forecast),
+        f"MovAvg_w={window_ma}": baseline_moving_average(y_train, n_forecast, window_ma),
+        f"ExpSmooth_α={alpha_smooth}": baseline_exp_smoothing(y_train, n_forecast, alpha_smooth)
+    }
 
-#     # Calcular métricas
-#     rows = []
-#     for name, y_pred in preds.items():
-#         mets = evaluate_forecast(y_test, y_pred)
-#         rows.append({"baseline": name, **mets})
-#     df_mets = pd.DataFrame(rows)
+    # Calcular métricas
+    rows = []
+    for name, y_pred in preds.items():
+        mets = evaluate_forecast(y_test, y_pred)
+        rows.append({"baseline": name, **mets})
+    df_mets = pd.DataFrame(rows)
 
-#     # Mostrar métricas en consola
-#     print("\n=== Métricas de baselines ===")
-#     print(df_mets.to_string(index=False))
+    # Mostrar métricas en consola
+    print("\n=== Métricas de baselines ===")
+    print(df_mets.to_string(index=False))
 
-#     # Graficar comparativa
-#     plot_baselines(y_train, y_test, preds, train_size)
+    # Graficar comparativa
+    plot_baselines(y_train, y_test, preds, train_size)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
-path = os.path.abspath(os.path.join(
-       os.path.dirname(__file__),
-       "..",
-       "..",
-       "BaseDeDatos",
-       "DATOS_HISTORICOS_CREDITO.csv"))
+# # 1) Directorio base de tus archivos
+# base_dir = os.path.abspath(
+#     os.path.join(os.path.dirname(__file__), "..", "..", "BaseDeDatos")
+# )
 
-df = pd.read_csv(path, skiprows=1)
+# # 2) Mapa de nombres a rutas
+# files = {
+#     "mastercard":        os.path.join(base_dir, "total_mastercard.xlsx"),
+#     "not_mastercard_or_visa":  os.path.join(base_dir, "total_tarjetasCredito.xlsx"),
+#     "tarjetas_debito":   os.path.join(base_dir, "total_tarjetasDebito.xlsx"),
+#     "visa":              os.path.join(base_dir, "total_visa.xlsx"),
+# }
 
-df.columns = df.iloc[0]
-df = df.iloc[3:, 1:11]
-df.reset_index(drop=True, inplace=True)
+# series_list = []
 
+# for name, path in files.items():
+#     # Carga saltando las 10 primeras filas y sin header
+#     df = pd.read_excel(path, header=None, skiprows=10)
 
-print(df.head())
-print(df.columns)
-print(df.shape)
+#     # Detectar la columna con más datos numéricos
+#     numeric_ratio = df.apply(lambda col: pd.to_numeric(col, errors='coerce').notna().mean())
+#     num_col = numeric_ratio.idxmax()
 
-trimester_to_month = {
-    '1T': '01/01',  # First trimester starts in January
-    '2T': '01/04',  # Second trimester starts in April
-    '3T': '01/07',  # Third trimester starts in July
-    '4T': '01/10',  # Fourth trimester starts in October
-}
+#     # Extraer y convertir a float
+#     serie = pd.to_numeric(df[num_col], errors='coerce').dropna()
+#     serie.index = range(len(serie))  # reset del índice a 0,1,2,...
+#     serie.name = name
+#     series_list.append(serie)
 
-df['Fecha'] = df.apply(lambda row: f"{trimester_to_month[row['Trimestre']]}/{row['Año']}", axis=1)
-df['Fecha'] = pd.to_datetime(df['Fecha'], format='%d/%m/%Y')
+# # 3) Concatenar todas las series en un DataFrame
+# df_all = pd.concat(series_list, axis=1)
 
-print(df.head())
-print(df.columns)
-print(df.shape)
+# # 4) Visualizar las primeras filas
+# print(df_all.head())
 
-df_nuevo_cols = ['Fecha', 'Tarjeta de crédito', 'Personal', 'Total']
-df_nuevo = df[df_nuevo_cols].copy()
-
-print(df_nuevo.head())
-print(df_nuevo.columns)
-print(df_nuevo.shape)
-
-output_path = os.path.abspath(
-              os.path.join(
-                os.path.dirname(__file__),
-                "..",
-                "..",
-                "BaseDeDatos",
-                "BD_HIST_BANCACRED_IF.csv"))
-
-df_nuevo.to_csv(output_path, index=False)
+# # 5) Guardar si lo deseas
+# df_all.to_csv(os.path.join(base_dir, "nuevas_series.csv"), index=False)

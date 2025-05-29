@@ -223,12 +223,22 @@ def process_series(
         "smape": smape(y_te,      y_te_pred)
     }
 
-    # 6) Gráfica
+    # 6) Calcular confiabilidad al 80%
+    mask = y_te != 0
+    errors_rel = np.abs(y_te - y_te_pred) / np.abs(y_te)
+    reliability_80 = np.mean(errors_rel[mask] <= 0.2)
+    mets["reliability_80"] = reliability_80
+
+    # (opcional) imprimir detalle
+    count_ok = int(np.sum(errors_rel[mask] <= 0.2))
+    total    = int(mask.sum())
+    print(f"[INFO] {series_name}: {count_ok}/{total} meses con error ≤20% (confiabilidad 80%)")
+
+    # 7) Gráfica
     plot_performance(series_name, y_tr, y_tr_pred, y_te, y_te_pred, train_size)
 
-    # 7) Retorna métricas
+    # 8) Retornar métricas y el escalador
     metrics = {"series": series_name, "degree": best_d, "alpha": best_a, **mets}
-
     return metrics, scaler_serie
 
 def main():
@@ -263,6 +273,15 @@ def main():
     bancacred_csv  = os.path.join(base_dir, "BD_HIST_BANCACRED_IF.csv")
     bancacred_date = "Fecha"
 
+    #Dataset Alan (sin índice de fecha)
+    alan_csv = os.path.join(base_dir, "nuevas_series.csv")
+    alan_cols = [
+        "mastercard", 
+        "not_mastercard_or_visa",
+        "tarjetas_debito",
+        "visa"
+    ]
+
     # Directorio de embeddings
     embedding_dir = os.path.join(base_dir, "embeddings")
 
@@ -278,6 +297,8 @@ def main():
 
     all_metrics   = []
     all_forecasts = []
+
+# -----------------------------------------------------------------------------
 
     # — Procesar Rappi (con gráfico estándar) —
     df_r = pd.read_csv(rappi_csv, encoding="latin1")
@@ -320,8 +341,52 @@ def main():
         all_forecasts.append(fc)
         print(f"\nForecast a {n_meses} meses para '{key}':\n", future)
 
-        # — Procesar BancaCred —  
-    # Deshabilitamos el plot por defecto dentro de process_series
+# -----------------------------------------------------------------------------
+
+    # -- Procesar Datos Alan --
+    df_a = pd.read_csv(alan_csv)
+    for col in alan_cols:
+        key = f"alan_{col.replace(" ", "_").lower()}"
+        metrics, scaler_serie = process_series(
+            series_name=key,
+            df=df_a,
+            col=col,
+            embedding_dir=embedding_dir,
+            dimension=dimension,
+            delay=delay,
+            train_ratio=train_ratio,
+            degrees=degrees_bancacred,
+            alphas=alphas
+        )
+        all_metrics.append(metrics)
+
+        ## Forecast final
+        # 1) Preparamos la serie normalizada para forecast
+        raw = df_a[col].dropna().astype(float).values.reshape(-1,1)
+        serie_norm = scaler_serie.transform(raw).ravel()
+
+        # 2) Forecast en escala [0,1]
+        future_norm = forecast_n_steps_full(
+            serie=serie_norm,
+            dimension=dimension,
+            delay=delay,
+            degree=metrics["degree"],
+            alpha=metrics["alpha"],
+            n_steps=n_meses
+        )
+        # 3) Volvemos a escala original
+        future = scaler_serie.inverse_transform(future_norm.reshape(-1,1)).ravel()
+
+        # Construimos el diccionario de pronóstico
+        fc = {"series": key}
+        for i, v in enumerate(future, 1):
+            fc[f"t+{i}"] = v
+        all_forecasts.append(fc)
+        print(f"\nForecast a {n_meses} meses para '{key}':\n", future)
+
+# -----------------------------------------------------------------------------
+
+    # — Procesar BancaCred —  
     original_plot = globals()['plot_performance']
     globals()['plot_performance'] = lambda *args, **kwargs: None
 
@@ -398,6 +463,8 @@ def main():
     # Restaurar función de plot original
     globals()['plot_performance'] = original_plot
 
+# -----------------------------------------------------------------------------
+
     # — Exportar métricas y forecasts —
     df_metrics   = pd.DataFrame(all_metrics)
     df_forecasts = pd.DataFrame(all_forecasts)
@@ -406,8 +473,6 @@ def main():
 
     print(f"\n[INFO] Métricas guardadas en:  {os.path.join(base_dir, 'polynomial_metrics.csv')}")
     print(f"[INFO] Forecasts guardados en: {os.path.join(base_dir, 'polynomial_forecasts.csv')}")
-
-
 
 if __name__ == "__main__":
     main()
