@@ -20,6 +20,14 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 plt.style.use("cyberpunk")
 
+def mase_horizon(y_true_h: np.ndarray, y_pred_h: np.ndarray,
+                y_train: np.ndarray, h: int):
+    # Denominador: average absolute h-step naive on train
+    n = len(y_train)
+    denom = np.abs(y_train[h:] - y_train[:-h]).mean()
+    num   = np.abs(y_true_h - y_pred_h).mean()
+    return num / denom
+
 def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Symmetric Mean Absolute Percentage Error (en %)."""
     eps = 1e-9
@@ -81,9 +89,12 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
     mets = {
         "mse": mean_squared_error(y_te, y_te_pred),
         "mae": mean_absolute_error(y_te, y_te_pred),
-        "mase": mase(y_te, y_te_pred, y_tr),
+        "mase": mase_horizon(y_te, y_te_pred, y_tr, h=1),
         "smape": smape(y_te, y_te_pred)
     }
+
+    mets['mase'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te))
+
     return y_tr, y_tr_pred, y_te, y_te_pred, mets, train_size
 
 def grid_search(X_full: np.ndarray, train_ratio: float, degrees: list, alphas: list):
@@ -219,9 +230,11 @@ def process_series(
     mets = {
         "mse":  mean_squared_error(y_te,       y_te_pred),
         "mae":  mean_absolute_error(y_te,      y_te_pred),
-        "mase": mase(y_te,       y_te_pred, y_tr),
+        "mase": mase_horizon(y_te,       y_te_pred, y_tr,h=1),
         "smape": smape(y_te,      y_te_pred)
     }
+
+    mets['mase'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te)) # mase con horizonte
 
     # 6) Calcular confiabilidad al 80%
     mask = y_te != 0
