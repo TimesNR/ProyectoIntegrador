@@ -1,11 +1,11 @@
-# RB
-"""
-Comparativa de baselines para serie de tiempo:
-  - Naive (último valor observado)
-  - Media móvil con ventana deslizante
-  - Suavizado exponencial simple
-Calcula MAE, MSE y sMAPE sobre el conjunto de prueba y grafica los resultados.
-"""
+# # RB
+# """
+# Comparativa de baselines para serie de tiempo:
+#   - Naive (último valor observado)
+#   - Media móvil con ventana deslizante
+#   - Suavizado exponencial simple
+# Calcula MAE, MSE y sMAPE sobre el conjunto de prueba y grafica los resultados.
+# """
 
 import os
 import numpy as np
@@ -143,3 +143,41 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# # 1) Directorio base de tus archivos
+# base_dir = os.path.abspath(
+#     os.path.join(os.path.dirname(__file__), "..", "..", "BaseDeDatos")
+# )
+
+# # 2) Mapa de nombres a rutas
+# files = {
+#     "mastercard":        os.path.join(base_dir, "total_mastercard.xlsx"),
+#     "not_mastercard_or_visa":  os.path.join(base_dir, "total_tarjetasCredito.xlsx"),
+#     "tarjetas_debito":   os.path.join(base_dir, "total_tarjetasDebito.xlsx"),
+#     "visa":              os.path.join(base_dir, "total_visa.xlsx"),
+# }
+
+# series_list = []
+
+# for name, path in files.items():
+#     # Carga saltando las 10 primeras filas y sin header
+#     df = pd.read_excel(path, header=None, skiprows=10)
+
+#     # Detectar la columna con más datos numéricos
+#     numeric_ratio = df.apply(lambda col: pd.to_numeric(col, errors='coerce').notna().mean())
+#     num_col = numeric_ratio.idxmax()
+
+#     # Extraer y convertir a float
+#     serie = pd.to_numeric(df[num_col], errors='coerce').dropna()
+#     serie.index = range(len(serie))  # reset del índice a 0,1,2,...
+#     serie.name = name
+#     series_list.append(serie)
+
+# # 3) Concatenar todas las series en un DataFrame
+# df_all = pd.concat(series_list, axis=1)
+
+# # 4) Visualizar las primeras filas
+# print(df_all.head())
+
+# # 5) Guardar si lo deseas
+# df_all.to_csv(os.path.join(base_dir, "nuevas_series.csv"), index=False)
