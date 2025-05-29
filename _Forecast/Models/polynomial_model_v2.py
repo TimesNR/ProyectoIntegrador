@@ -93,7 +93,7 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
         "smape": smape(y_te, y_te_pred)
     }
 
-    mets['mase'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te))
+    mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te))
 
     return y_tr, y_tr_pred, y_te, y_te_pred, mets, train_size
 
@@ -234,7 +234,7 @@ def process_series(
         "smape": smape(y_te,      y_te_pred)
     }
 
-    mets['mase'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te)) # mase con horizonte
+    mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te)) # mase con horizonte
 
     # 6) Calcular confiabilidad al 80%
     mask = y_te != 0
