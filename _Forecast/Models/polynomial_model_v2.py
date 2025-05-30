@@ -48,7 +48,7 @@ def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     eps = 1e-9
     num = np.abs(y_true - y_pred)
     den = np.abs(y_true) + np.abs(y_pred) + eps
-    return (1/100.) * np.mean(2. * num / den)
+    return (.5) * np.mean(2. * num / den)
 
 def mase(y_true, y_pred, y_train, m=1):
     """Mean Absolute Scaled Error (MASE)."""
