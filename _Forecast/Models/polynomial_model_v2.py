@@ -17,8 +17,24 @@ import mplcyberpunk
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler, MinMaxScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from permetrics.regression import RegressionMetric
 
 plt.style.use("cyberpunk")
+
+## DIRECTORIOS
+base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__),
+                     "..", "..", "BaseDeDatos")
+)
+# Directorio de embeddings
+embedding_dir = os.path.join(base_dir, "embeddings")
+
+# Directorio de plots
+plot_dir = os.path.join(os.path.dirname(__file__), 
+                            "..",
+                            "Results"
+)
+os.makedirs(plot_dir, exist_ok=True)
 
 def mase_horizon(y_true_h: np.ndarray, y_pred_h: np.ndarray,
                 y_train: np.ndarray, h: int):
@@ -90,7 +106,7 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
         "mse": mean_squared_error(y_te, y_te_pred),
         "mae": mean_absolute_error(y_te, y_te_pred),
         "mase": mase_horizon(y_te, y_te_pred, y_tr, h=1),
-        "smape": smape(y_te, y_te_pred)
+        "smape": RegressionMetric(y_te, y_te_pred)
     }
 
     mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te))
@@ -122,7 +138,12 @@ def plot_performance(series_name, y_tr, y_tr_pred, y_te, y_te_pred, train_size):
     plt.ylabel("Valor")
     plt.legend()
     plt.tight_layout()
-    plt.show()
+
+    # Guardar plot
+    filepath = os.path.join(plot_dir, f"{series_name}.png")
+    plt.savefig(filepath)
+    plt.close()
+    print(f"[INFO] Plot saved to {filepath}")
 
 def forecast_n_steps_full(
     serie: np.ndarray,
@@ -231,7 +252,7 @@ def process_series(
         "mse":  mean_squared_error(y_te,       y_te_pred),
         "mae":  mean_absolute_error(y_te,      y_te_pred),
         "mase": mase_horizon(y_te,       y_te_pred, y_tr,h=1),
-        "smape": smape(y_te,      y_te_pred)
+        "smape": RegressionMetric(y_te,      y_te_pred)
     }
 
     mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te)) # mase con horizonte
@@ -256,10 +277,7 @@ def process_series(
 
 def main():
     # ---------------- Configuración general ----------------
-    base_dir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__),
-                     "..", "..", "BaseDeDatos")
-    )
+
     # Dataset Rappi (sin índice de fecha)
     rappi_csv  = os.path.join(base_dir, "DATOSLIMPIOSRAPPI.csv")
     rappi_cols = [
@@ -295,9 +313,6 @@ def main():
         "visa"
     ]
 
-    # Directorio de embeddings
-    embedding_dir = os.path.join(base_dir, "embeddings")
-
     # Parámetros comunes
     dimension   = 3
     delay       = 1
@@ -306,7 +321,6 @@ def main():
     degrees_bancacred = list(range(1, 3))
     alphas      = [0.01, 0.1, 1.0, 10.0, 100.0]
     n_meses     = 6
-    # -------------------------------------------------------
 
     all_metrics   = []
     all_forecasts = []
@@ -359,7 +373,7 @@ def main():
     # -- Procesar Datos Alan --
     df_a = pd.read_csv(alan_csv)
     for col in alan_cols:
-        key = f"alan_{col.replace(" ", "_").lower()}"
+        key = f"alan_{col.replace(' ', '_').lower()}"
         metrics, scaler_serie = process_series(
             series_name=key,
             df=df_a,
