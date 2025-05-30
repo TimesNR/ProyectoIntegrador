@@ -17,7 +17,6 @@ import mplcyberpunk
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler, MinMaxScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from permetrics.regression import RegressionMetric
 
 plt.style.use("cyberpunk")
 
@@ -49,7 +48,7 @@ def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     eps = 1e-9
     num = np.abs(y_true - y_pred)
     den = np.abs(y_true) + np.abs(y_pred) + eps
-    return 100. * np.mean(2. * num / den)
+    return (1/100.) * np.mean(2. * num / den)
 
 def mase(y_true, y_pred, y_train, m=1):
     """Mean Absolute Scaled Error (MASE)."""
@@ -106,7 +105,7 @@ def train_evaluate(X_full: np.ndarray, train_ratio: float, degree: int, alpha: f
         "mse": mean_squared_error(y_te, y_te_pred),
         "mae": mean_absolute_error(y_te, y_te_pred),
         "mase": mase_horizon(y_te, y_te_pred, y_tr, h=1),
-        "smape": RegressionMetric(y_te, y_te_pred)
+        "smape": smape(y_te, y_te_pred)
     }
 
     mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te))
@@ -252,7 +251,7 @@ def process_series(
         "mse":  mean_squared_error(y_te,       y_te_pred),
         "mae":  mean_absolute_error(y_te,      y_te_pred),
         "mase": mase_horizon(y_te,       y_te_pred, y_tr,h=1),
-        "smape": RegressionMetric(y_te,      y_te_pred)
+        "smape": smape(y_te,      y_te_pred)
     }
 
     mets['mase_horizon'] = mase_horizon(y_te, y_te_pred, y_tr, h=len(y_te)) # mase con horizonte
