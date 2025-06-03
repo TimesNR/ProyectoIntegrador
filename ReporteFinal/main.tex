@@ -1,0 +1,162 @@
+            % Librerias y 
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc} % Encoding for special characters
+
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{braket} 
+\usepackage[spanish]{babel}
+\usepackage[numbers]{natbib}
+\usepackage{amsmath, amssymb} % Math symbols
+\usepackage[margin=0.8in]{geometry} % Custom margins
+\usepackage{float} % Improved control over float placement
+\usepackage{enumitem} % Customization of lists
+\usepackage{xurl} % Breaking URLs nicely
+\usepackage{hyperref} % Hyperlinks
+\hypersetup{ % Hyperlink configuration
+    breaklinks=true,
+    hidelinks % Hides the box around hyperlinks
+}
+\usepackage{xcolor} % Colors for custom text
+\usepackage{csquotes} % Quotation handling
+\usepackage{biblatex} % Bibliography
+\addbibresource{Bibliografías.bib} % Bibliography file
+\renewcommand{\bibname}{Referencias} % Para libros o reportes
+\renewcommand{\refname}{Referencias} % Para artículos o clases como "article"
+\bibliographystyle{plainnat}
+
+
+    % COlores
+%\definecolor{carminered}{rgb}{1.0, 0.0, 0.22}
+%\definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+%\definecolor{brightlavender}{rgb}{0.75, 0.58, 0.89}
+
+%\pagecolor{black} 
+%\color{white}
+%\maketitle
+
+\begin{document}
+    \begin{titlepage}
+        \centering
+        \begin{figure} [H]
+            \centering
+            \includegraphics[width=0.25\linewidth]{logotec.png}
+        \end{figure}
+        \vspace{1cm}
+        {\bfseries\LARGE Instituto Tecnológico de Estudios Superiores de Monterrey \par}
+        \vspace{1cm}
+        {\scshape\Large Ingeniería en Ciencia de Datos y Matemáticas \par}
+        \vspace{2cm}
+        {\scshape\LARGE Creación de herramientas para la predicción geométrica de tarjetas de crédito\par}
+        \vspace{1cm}
+        {\itshape\Large Ivan Ongay Valverde \par}
+        \vfill
+        {\Large Autor:  \par}
+        {\Large Alan Uriel Merlan Esquivel\par}
+        {\Large Rafa\par}
+        {\Large Ximena\par}
+        {\Large Juan\par}
+        {\Large Alejandro\par}
+        {\Large Sebastian\par}
+        \vfill
+        {\Large Junio 2025 \par}
+    \end{titlepage}
+
+
+\selectlanguage{spanish} 
+
+
+\begin{Large}
+\tableofcontents
+\end{Large}%
+\pagebreak
+
+\section{Introducción} \label{sec:intro}
+\input{Secciónes/intro}
+
+
+\section{Definición del problema y objetivos} \label{sec:Definición}
+\input{Secciónes/objetivo}
+\subsection{Objetivos} \label{subsec: Objetivo}
+\input{}
+\subsection{Delimitiación del problema forecast} \label{subsec: Delimitación}
+\input{}
+\subsection{Delimitación del problema optimización} \label{subsec: Herramientas}
+\input{}
+\subsection{Delimitación del problema herramientas de visualización} \label{subsec: Herramientas}
+\input{}
+
+
+\section{Marco téorico}\label{sec: MT}
+\input{}
+\subsection{Características de Mercado} \label{sec:caracmerc}
+\input{Secciónes/carac_mercado}
+
+\subsection{Forecast} \label{sec:forecasting}
+\input{Secciónes/forecast}
+
+\subsection{Prerequisitos del modelo} \label{sec:forecasting}
+\input{}
+
+\subsection{Programación dinámica} \label{sec:programación dinámica}
+\input{}
+
+\subsection{Greedy search y euristica} \label{sec:greedy search}
+\input{}
+
+\subsection{Ciberseguridad} \label{sec:greedy search}
+\input{}
+
+\section{Metodológia} \label{sec: metodologia}
+\input{}
+
+\subsection{Métricas forecast} \label{sec: metodologia}
+\input{}
+
+\subsection{Criterio de selección de ténicas forecast} \label{sec: metodologia}
+\input{}
+
+\subsection{Validación de supuestos forecast} \label{sec: metodologia}
+\input{}
+
+\subsection{Validación con otras series de tiempo} \label{sec: metodologia}
+\input{}
+
+\subsection{Solución del problema de optimización} \label{sec: metodologia}
+\input{}
+
+\subsection{Frontend} \label{sec: metodologia}
+\input{}
+
+\subsection{Backend y conexión con el front} \label{sec: metodologia}
+\input{}
+
+\subsection{Codigo} \label{sec: metodologia}
+\input{}
+
+
+\section{Resultados} \label{sec: metodologia}
+\input{}
+
+\subsection{Forecast} \label{sec: metodologia}
+\input{}
+
+\subsection{Optimización} \label{sec: metodologia}
+\input{}
+
+\subsection{Pagina web} \label{sec: metodologia}
+\input{}
+
+\subsection{Áreas de oportunidad} \label{sec: metodologia}
+\input{}
+
+\bibliography{biblio} 
+
+\end{document}
