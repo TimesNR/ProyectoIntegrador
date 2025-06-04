@@ -1,117 +1,46 @@
-# ProyectoIntegrador
+# Getting Started with Create React App
 
-Hola.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Available Scripts
 
-Este repositorio será para los archivos del proyecto. Pero antes una breve introducción a github
-Para poder usar github adecuadamente es necesario instalar [git](https://github.com/mouredev/hello-git?tab=readme-ov-file) el cual se maneja similar a una interfaz de comandos. En caso de no querer usarla y prefieren algo más intuitivo de usar les recomiendo Github Destktop. 
+In the project directory, you can run:
 
+### `yarn start`
 
-Para la parte del __bash__ se maneja similar a linux
-* ls: Observar los documentos en la carpeta en la cual estas ubicado  
-* cd + nombre_carpeta\: Permite moverte entre carpetas
-* comando -help: Permite ver las opciones de los comandos
-* pwd: Muestra tu ruta de archivos
-* mkdir: Crea una carpeta o un archivo
-* git log: Muestra el hash del commit
-* git add nombre_archivo: Agrega un arc
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-## Python Style Rules
-[Lineamientos generales](https://google.github.io/styleguide/pyguide.html#s3-python-style-rules)
-### General Rules
-- No terminar con `;`. No poner dos statements en una misma línea.
-- Evitar líneas de más de 80 caracteres.
-- Cuando comentes un URL, ponerlo en una línea por separado:
-  ```python
-  # See details at
-  # http://www.example.com/us/developer/documentation/api/content/v2.0/csv_file_name_extension_full_specification
-  ```
-- No usar paréntesis en el `return` o en la condición del `if`.
+### `yarn test`
 
----
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-###  Indentation
-- Indentar con **4 espacios** y NO con tabulador.
-- En el caso de diccionario, dejar la llave junto con su valor asociado en una misma línea.
-- Para **trailing commas**, se puede separar por elemento, pero el bracket final debe estar en otra línea:
-  ```python
-  golomb4 = [
-      0,
-      1,
-      4,
-      6,
-  ]
-  ```
+### `yarn build`
 
----
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-###  Blank Lines
-- **Dos líneas** entre funciones y clases.
-- **Una línea** entre cada definición de métodos.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
----
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-###  White Spaces
-- Sin espacios en blanco entre **paréntesis, comas, dos puntos, etc.**
-- **1 espacio en blanco entre operadores lógicos**:
-  ```python
-  x == 1
-  ```
-- Al definir argumentos por defecto en una función, usar espacio en blanco entre el operador de asignación `=`.
-- **No alinear comentarios.**
+### `yarn eject`
 
----
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-###  Comments and Docstrings
-- Poner un string describiendo el programa, la clase, etc.
-  ```python
-  """A one-line summary of the module or program, terminated by a period.
-  
-  Leave one blank line.  The rest of this docstring should contain an
-  overall description of the module or program.  Optionally, it may also
-  contain a brief description of exported classes and functions and/or usage
-  examples.
-  
-  Typical usage example:
-  
-    foo = ClassFoo()
-    bar = foo.function_bar()
-  """
-  ```
-- Incluir docstrings en **APIs públicas, funciones largas o con lógica complicada**. Debe tener una sección para los **argumentos** y otra para el **return**.
-- Si se hace un **override**, solo es necesario un docstring si la función cambia fundamentalmente.
-- Para las **clases**, debe haber un docstring describiéndola y sus atributos públicos. Las funciones de la clase también deben incluir docstrings.
-- **Comentar antes de operaciones complicadas**. Si el comentario no describe algo complejo, ponerlo en la misma línea.
-- **Usar doble quotes (`"""`) para docstrings.**
-- **Formato recomendado para long strings:**
-  ```python
-  long_string = ("And this too is fine if you cannot accept\n"
-                 "extraneous leading spaces.")
-  ```
-- Usar **TODO comments** en soluciones temporales del código.
-- Los `import` se organizan **del más genérico al más específico**.
-- No usar getters y setters innecesarios, solo si agregan información relevante.
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
----
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-### Naming Conventions
-- **Los nombres deben ser descriptivos**, excepto en valores iterativos de `for` (ejemplo: `i`, `e`).
-- **No usar abreviaciones.**
-- Separar por **guion bajo (`snake_case`)**.
-- Evitar nombres que incluyan el tipo de la variable innecesariamente.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
----
+## Learn More
 
-### MAIN Execution
-Si el archivo está destinado a ser ejecutable, usar la siguiente estructura:
-```python
-from absl import app
-...
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-def main(argv: Sequence[str]):
-    # process non-flag arguments
-    ...
-
-if __name__ == '__main__':
-    app.run(main)
+To learn React, check out the [React documentation](https://reactjs.org/).

@@ -1,0 +1,27 @@
+/* Compactar solo las filas de datos (tbody) */
+.compact-table tbody tr {
+    height: 20px; /* Ajusta a tu gusto (más pequeño = más compacto) */
+}
+
+/* Ajustes opcionales para el texto dentro de celdas */
+.compact-table td {
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+    vertical-align: middle;
+    max-width: 80px;
+    font-size: 0.85rem;
+    padding: 4px 6px;
+    border: 1px solid black !important;
+}
+
+/* La primera fila (thead) se queda con estilo normal de Bootstrap */
+.compact-table thead th {
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+
+}
+

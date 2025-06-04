@@ -1,0 +1,12 @@
+/* Bordes ovalados (más redondeados que los estándar) */
+.oval-button {
+  border-radius: 50px !important; /* Valor alto para forma ovalada */
+  padding: 0.5rem 2rem; /* Ajusta el relleno horizontal para mejor proporción */
+  margin: 0.5rem; /* Espacio entre botones */
+}
+
+/* Efecto hover opcional */
+.oval-button:hover {
+  transform: scale(1.05); /* Ligero zoom al pasar el mouse */
+  transition: transform 0.2s ease;
+}
